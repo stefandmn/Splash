@@ -29,7 +29,7 @@ In order to build `clue-splash` package you have to install required packages:
 
 # Running
 
-1. To display a splash image you have run the following command line:
+To display a splash image you have run the following command line:
 
 `/opt/clue/bin/splash --picture=AAAxBBB@image`
 
@@ -58,7 +58,7 @@ __or__
 `/opt/clue/bin/splash --picture=*640x360@"/opt/clue/share/splash/images/splash.jpg"`
 
 
-2. To display a text message you have run the following command line:
+To display a text message you have run the following command line:
 
 `/opt/clue/bin/splash --picture=AAAxBBB:fontname:size@message`
 
