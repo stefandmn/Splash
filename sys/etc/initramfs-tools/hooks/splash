@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+
+PREREQ=""
+
+prereqs () {
+	echo "${PREREQ}"
+}
+
+case "${1}" in
+	prereqs)
+		prereqs
+		exit 0
+		;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+mkdir -p $DESTDIR/opt/clue/bin
+mkdir -p $DESTDIR/opt/clue/share/splash
+cp -rf /opt/clue/bin/splash $DESTDIR/opt/clue/bin/splash
+cp -rf /opt/clue/share/splash/* $DESTDIR/opt/clue/share/splash/
+
+copy_exec /opt/clue/bin/splash
+
+manual_add_modules splash
+
+exit 0

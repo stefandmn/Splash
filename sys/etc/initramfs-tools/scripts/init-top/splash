@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -e
+
+PREREQ=""
+
+prereqs () {
+	echo "${PREREQ}"
+}
+
+case "${1}" in
+	prereqs)
+		prereqs
+		exit 0
+		;;
+esac
+
+splash=n
+
+for x in $(cat /proc/cmdline); do
+	case $x in
+		splash)
+			splash=y
+			;;
+	esac
+done
+
+if [ "$splash" = "y" ]; then
+	if [ -x /opt/clue/bin/splash ]; then
+		/opt/clue/bin/splash --picture=640x360@splash
+		/opt/clue/bin/splash --message="820x650@starting services.."
+	fi
+fi
+
+exit 0
