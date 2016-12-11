@@ -19,7 +19,8 @@ DAEMON="/opt/clue/bin/splash"
 
 splash=n
 test -x $DAEMON || exit 0
-RUNLEVEL="$(/sbin/runlevel | cut -d " " -f 2)"
+RUNLEVEL=$(/sbin/runlevel | cut -d " " -f 2)
+if [ "${RUNLEVEL}" = "" -o "${RUNLEVEL}" = "unknown" ]; then RUNLEVEL=5 ; fi
 
 . /lib/lsb/init-functions
 
@@ -39,7 +40,7 @@ case "$1" in
 				IPADDR=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
 				IPADDR=`echo "$IPADDR" | tr "\n" " "`
 				$DAEMON --picture=640x360@splash
-				$DAEMON --message="820x650@Clue is running using $IPADDR"
+				$DAEMON --message="780x650@Clue is running using ${IPADDR}"
 			else
 				$DAEMON --picture=640x360@splash
 				$DAEMON --message="820x650@starting media center.." --exit=30
