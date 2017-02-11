@@ -49,6 +49,7 @@ case "$1" in
 		;;
     stop)
     	if [ "$splash" = "y" ]; then
+    		$DAEMON --exit
 			$DAEMON --picture=640x360@*splash
 			$DAEMON --message="820x650@stopping services.."
 			sleep 1
