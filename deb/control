@@ -1,7 +1,7 @@
 Origin: AMSD
 Package: clue-splash
 Version: 1.0.18
-Priority: standard
+Priority: important
 Section: main
 Installed-Size: 0000
 Architecture: armhf
