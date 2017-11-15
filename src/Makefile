@@ -12,12 +12,12 @@ INCL=-I/usr/include/freetype2
 ARCH=linux
 
 
-out/${NAME}: Makefile ${NAME}.c
+make:
 	if [ -d out/ ]; then rm -rf out/; mkdir -p out/; else mkdir -p out/; fi
-	${CC} -static *.c -o out/${NAME} ${LIBS} ${INCL}
+	${CC} -w -static *.c -o out/${NAME} ${LIBS} ${INCL}
 
 
-install: out/${NAME}
+install: make
 	if [ ! -d ${BINDIR} ]; then mkdir -p ${BINDIR} ; fi
 	if [ ! -d ${SHRDIR} ]; then mkdir -p ${SHRDIR} ; fi
 	cp -rf out/${NAME} ${BINDIR}/${NAME}

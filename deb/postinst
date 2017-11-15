@@ -1,9 +1,10 @@
 #!/bin/bash
 
-if [ $1 == "configure" ]; then
+if [ "$1" == "configure" ]; then
 	# Set scripts permissions and Register service
 	chmod +x /etc/init.d/clue-splash
-	update-rc.d clue-splash start 99 . stop 01 >/dev/null 2>&1
+	/usr/sbin/update-rc.d clue-splash start 99 . stop 01 >/dev/null 2>&1
+	/bin/systemctl daemon-reload
 
 	# Register InitRamFS
 	chmod +x /etc/initramfs-tools/hooks/splash

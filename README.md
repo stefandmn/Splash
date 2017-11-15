@@ -10,7 +10,7 @@ graphical console and updates display content: display new splashes or text mess
 
 Splash program is designed to support the following feature:
 
-1. `--picture` = sets a splash image on the graphical screen. Though this command option you can specify 
+1. `--image` = sets a splash image on the graphical screen. Though this command option you can specify
 		also the coordinates where the picture will be displayed.
 2. `--message` = displays a message text on the graphical screen. Additionally, you can specify the 
 		coordinates where the text message will be printed and also the font details (name and size).
@@ -31,31 +31,18 @@ In order to build `clue-splash` package you have to install required packages:
 
 To display a splash image you have run the following command line:
 
-`/opt/clue/bin/splash --picture=AAAxBBB@image`
+`/opt/clue/bin/splash --message="Sample message" -x100 -y200`
 
 The possible option parts are:
-- AAAxBBB = are the (x,y) coordinates (starting from left,top corner of the screen) where the image will be displayed.
-			The numbers (horizontal and vertical dimensions) are separated by `x` sign.
-- image   = it is the JPG image that will be displayed on the screen that is stored in `/opt/clue/share/splash/images`
-			folder. You can refer any image from this folder without specifying the file extension or the full path.
-			On the other side you can specify you can specify a full path image if your resources are not located on
-			the base folder. If you want to specify the full path of the image you need to write it under double
-			quotes (`"`).
-- `@`        = it is the separator between image file name and coordinates.
-- `*`        = this sign needs be specified when you want to ask the program to reset initial screen (to remove existing
-			splash image or other text messages). The sign could be specify in front of coordinates or of image name or path.
+-
 
 ## Examples for Splash
 
-`/opt/clue/bin/splash --picture=*640x360@splash`
+`/opt/clue/bin/splash --image=splash`
 
 __or__
 
-`/opt/clue/bin/splash --picture=640x360@*splash`
-
-__or__
-
-`/opt/clue/bin/splash --picture=*640x360@"/opt/clue/share/splash/images/splash.jpg"`
+`/opt/clue/bin/splash --image=/opt/clue/share/splash/images/splash.jpg"`
 
 
 To display a text message you have run the following command line:

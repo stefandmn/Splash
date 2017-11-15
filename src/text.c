@@ -1,0 +1,221 @@
+
+/**
+ * Clue Media Experience 
+ * text.c - implementation of font and text drawing functions
+ */
+
+
+#include <stdio.h>
+#include <linux/fb.h>
+#include <ft2build.h>
+#include <freetype.h>
+
+#include "text.h"
+
+
+CmdData SetTextProps(CmdData data)
+{
+	char value[1000], tmpval[255];
+	
+	//font name/file property
+	if(hasDataProperty(data, "fontfile"))
+	{
+		strcpy(tmpval, getDataProperty(data, "fontfile"));
+
+		if(strcmp(tmpval, "") > 0)
+		{
+			if(access(tmpval, F_OK ) != -1 )
+			{
+				strcpy(value, realpath(tmpval, NULL));
+			}
+			else
+			{
+				if(!startsWith(tmpval, "/"))
+				{
+					if(!startsWith(tmpval, "fonts/"))
+					{
+						strcpy(value, RESPATH);
+						strcat(value, "fonts/");
+						strcat(value, tmpval);
+					}
+					else
+					{
+						strcpy(value, RESPATH);
+						strcat(value, tmpval);
+					}
+				}
+				else
+				{
+					strcat(value, tmpval);
+				}
+
+				//check if the font has supported extention (TTF)
+				if(!endsWith(value, ".ttf")) strcat(value, ".ttf");
+			}			
+		}
+		else strcpy(value, DEFTXT_FPATH);
+
+		data = setDataProperty(data, "fontfile", value);
+	}
+	else data = setDataProperty(data, "fontfile", DEFTXT_FPATH);
+
+	//font size
+	if(hasDataProperty(data, "fontsize"))
+	{
+		strcpy(value, getDataProperty(data, "fontsize"));
+		if(strcmp(value, "") == 0) data = setIntDataProperty(data, "fontsize", DEFTXT_SIZE);
+	}
+	else data = setIntDataProperty(data, "fontsize", DEFTXT_SIZE);
+
+	//font color
+	if(hasDataProperty(data, "fontcolor"))
+	{
+		strcpy(value, getDataProperty(data, "fontcolor"));
+		if(strcmp(value, "") == 0) data = setDataProperty(data, "fontcolor", DEFTXT_COLOR);
+	}
+	else data = setDataProperty(data, "fontcolor", DEFTXT_COLOR);
+
+	//font spacing
+	if(hasDataProperty(data, "fontspacing"))
+	{
+		strcpy(value, getDataProperty(data, "fontspacing"));
+		if(strcmp(value, "") == 0) data = setIntDataProperty(data, "fontspacing", DEFTXT_SPACE);
+	}
+	else data = setIntDataProperty(data, "fontspacing", DEFTXT_SPACE);
+
+	return data;
+}
+
+/**
+ * Draw a text message using specific coordinates
+ * 
+ * @param data command data structure containing text message and coordinates
+ */
+void DrawText(CmdData data)
+{
+	DEBUG("Drawing Text message from command: [%s] >> x=%d, y=%d, font=%s, size=%d, color=%d, spacing=%d",
+			data.value, data.xpoint, data.ypoint,
+			getDataProperty(data, "fontfile"),
+			getIntDataProperty(data, "fontsize"),
+			getColorDataProperty(data, "fontcolor"),
+			getIntDataProperty(data, "fontspacing") );
+
+	__drawText(data.value, data.xpoint, data.ypoint,
+			getDataProperty(data, "fontfile"),
+			getIntDataProperty(data, "fontsize"),
+			getColorDataProperty(data, "fontcolor"),
+			getIntDataProperty(data, "fontspacing") );
+}
+
+/**
+ * Remove a text message using specific coordinates
+ * 
+ * @param data command data structure containing text message and coordinates
+ */
+void OverdrawText(CmdData data)
+{
+	DEBUG("Overdrawing Text message for removal: [%s] >> x=%d, y=%d,", data.value, data.xpoint, data.ypoint);
+	
+	__drawText(data.value, data.xpoint, data.ypoint,
+			getDataProperty(data, "fontfile"),
+			getIntDataProperty(data, "fontsize"),
+			get16bitColorFromRGB(0, 0, 0),
+			getIntDataProperty(data, "fontspacing"),
+			getIntDataProperty(data, "fontdecoration") );
+}
+
+/**
+ * Draw a text message using specific coordinates
+ * 
+ * @param text text message
+ * @param xc horizontal position
+ * @param yc vertical position
+ * @param fontfile font file to be used to draw the letters
+ * @param size the size of the font
+ * @param color the text color
+ * @param spacing spacing between letters
+ */
+void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned short int color, int spacing)
+{
+	int n, y, x, id;
+	double z;
+	int fontHeight = 0, fontWidth = 0;
+	File fontfile = getFile(fontname);
+
+	if(fontfile.size > 0 && fontfile.data != NULL)
+	{
+		FT_Library library;
+		FT_Face face;
+		FT_GlyphSlot slot;
+		FT_Matrix matrix;
+		FT_Vector pen;
+		FT_Error error;
+		FT_Glyph_Metrics *metrics;
+		int tsize = text[strlen(text) - 1] == '\0' ? strlen(text) - 1 : strlen(text);
+
+		FT_Init_FreeType(&library);
+		FT_New_Memory_Face(library, fontfile.data, fontfile.size, 0, &face);
+		FT_Set_Char_Size(face, size * 64, 0, 72, 0);
+		FT_Set_Pixel_Sizes(face, 0, size);
+		FT_UInt glyph_index;
+	
+		for (n = 0; n < strlen(text); n++)
+		{
+			glyph_index = FT_Get_Char_Index(face, text[n]);
+			FT_Load_Glyph(face, glyph_index, 0);
+			metrics = &face->glyph->metrics;
+			FT_Render_Glyph(face->glyph, ft_render_mode_normal);
+
+			if ((metrics->horiBearingY / 64) > fontHeight)
+			{
+				fontHeight = (metrics->horiBearingY / 64);
+			}
+
+			if (face->glyph->bitmap.width > fontWidth)
+			{
+				fontWidth = face->glyph->bitmap.width;
+			}
+		}
+
+		yc += fontHeight;
+
+		for (n = 0; n < strlen(text); n++)
+		{
+			if (text[n] == ' ')
+			{
+				xc += fontWidth;
+			}
+			else
+			{
+				glyph_index = FT_Get_Char_Index(face, text[n]);
+				FT_Load_Glyph(face, glyph_index, 0);
+				metrics = &face->glyph->metrics;
+				FT_Render_Glyph(face->glyph, ft_render_mode_normal);
+
+				for (y = 0; y < face->glyph->bitmap.rows; y++)
+				{
+					for (x = 0; x < face->glyph->bitmap.width; x++)
+					{
+						if (face->glyph->bitmap.buffer[y * face->glyph->bitmap.width + x] > 0)
+						{
+							if (x + xc + z >= 0 && y + yc - (metrics->horiBearingY / 64) >= 0)
+							{
+								long int location = (x + xc + z + fbs.vinfo.xoffset) * (fbs.vinfo.bits_per_pixel / 8) + (y + yc - (metrics->horiBearingY / 64) + fbs.vinfo.yoffset) * fbs.finfo.line_length;
+								if ((fbs.fbp + location)) * ((unsigned short int*) (fbs.fbp + location)) = color;
+							}
+						}
+					}
+				}
+
+				xc += face->glyph->bitmap.width + z + spacing;
+			}
+		}
+
+		free(fontfile.data);
+		FT_Done_Face(face);
+		FT_Done_FreeType(library);
+	}
+	
+	if(fontname != NULL) free(fontname);
+}
+
