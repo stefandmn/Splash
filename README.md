@@ -10,13 +10,10 @@ graphical console and updates display content: display new splashes or text mess
 
 Splash program is designed to support the following feature:
 
-1. `--image` = sets a splash image on the graphical screen. Though this command option you can specify
-		also the coordinates where the picture will be displayed.
-2. `--message` = displays a message text on the graphical screen. Additionally, you can specify the 
-		coordinates where the text message will be printed and also the font details (name and size).
-3. `--console` = attach the new workflow to the current graphical console (if is defined, otherwise will 
-		initiate the frame buffer without graphical format.
-4. `--exit` = exit from the splash application. It accepts also a delay as an optional parameter
+1. `--image`   = prints a splash image on the graphical term.
+2. `--message` = displays a text message on the graphical screen.
+3. `--draw`    = displays graphical shapes and basic controls for data display, loading, etc.
+4. `--exit`    = exit from the splash application. It accepts also a delay as an optional parameter
 
 For the syntax details of each option please see **Running** chapter.
 
@@ -29,14 +26,22 @@ In order to build `clue-splash` package you have to install required packages:
 
 # Running
 
-To display a splash image you have run the following command line:
+1. To display a text message on the screen you have to prepare a command with the following options:
+	TBD
+
+___Examples___
 
 `/opt/clue/bin/splash --message="Sample message" -x100 -y200`
 
-The possible option parts are:
--
+__or__
 
-## Examples for Splash
+`/opt/clue/bin/splash --message="Sample message" -x100 -y200`
+
+
+2. To display a picture on the screen you have to build a command with the following options:
+	TBD
+
+___Examples___
 
 `/opt/clue/bin/splash --image=splash`
 
@@ -44,39 +49,10 @@ __or__
 
 `/opt/clue/bin/splash --image=/opt/clue/share/splash/images/splash.jpg"`
 
-
-To display a text message you have run the following command line:
-
-`/opt/clue/bin/splash --picture=AAAxBBB:fontname:size@message`
-
-- AAAxBBB = are the (x,y) coordinates (starting from left,top corner of the screen) where the text message will be
-			displayed. The numbers (horizontal and vertical dimensions) are separated by `x` sign.
-- message  = it is the text message that will be displayed on the screen. If the text messages are requested to be
-			displayed the previous message is deleted. If you want to keep it on the screen you have to put `*` in
-			front of the message or in front of the coordinates.
-- `@`        = it is the separator between message text and the other details.
-- `:`        = separates the fond details by the others: you can specify only the font name or only the font size or
-			both. The font name could be nominated as simple label identifying one of the font file stored in
-			`/opt/clue/share/splash/fonts` folder or you can specify a full path choosing one of the font files
-			from the local file system.
-- `*`        = this sign needs be specified when you want to keep persistent the specified text message.
-
-## Examples for Text Messages
-
-`/opt/clue/bin/splash --message=640x360:regular:25@"Loading resources.."`
-
 __or__
 
-`/opt/clue/bin/splash --message=640x360:25@"Loading resources.."`
-
-__or__
-
-`/opt/clue/bin/splash --message=640x360:regular@"Starting services.."`
-
-__or__
-
-`/opt/clue/bin/splash --message=*1700x10:bold:25@"Clue OS"`
+`/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg"`
 
 
-> **Note**: The workflow steps and execution details could be seen in the process related log file created during
-process execution. The log file name is located in `/var/log/splash.log`.
+3. To display a graphical shape on the screen you have to run a command with the following options:
+	TBD
