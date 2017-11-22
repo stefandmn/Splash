@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <assert.h>
 #include <linux/fb.h>
 #include <sys/mman.h>
 
@@ -27,7 +28,7 @@ void OpenBuffer(void)
 
 	if(getenv("FRAMEBUFFER"))
 	{
-		if (!(fbs.fbfd = fopen(getenv("FRAMEBUFFER"), "w+")))
+		if (!(fbs.fbf = fopen(getenv("FRAMEBUFFER"), "w+")))
 		{
 			ERROR("Cannot open FrameBuffer device: %s", getenv("FRAMEBUFFER"));
 			exit(1);
@@ -35,20 +36,20 @@ void OpenBuffer(void)
 	}
 	else
 	{
-		if (!(fbs.fbfd = fopen(DEF_DEV, "w+")))
+		if (!(fbs.fbf = fopen(DEF_DEV, "w+")))
 		{
 			LOGGER("Cannot open FrameBuffer device: %s", DEF_DEV);
 			exit(1);
 		}		
 	}
 
-	if (ioctl(fileno(fbs.fbfd), FBIOGET_VSCREENINFO, &fbs.oinfo) == -1)
+	if (ioctl(fileno(fbs.fbf), FBIOGET_VSCREENINFO, &fbs.oinfo) == -1)
 	{
 		ERROR("Error reading variable information");
 		exit(3);
 	}
 
-	if (ioctl(fileno(fbs.fbfd), FBIOGET_FSCREENINFO, &fbs.finfo) == -1)
+	if (ioctl(fileno(fbs.fbf), FBIOGET_FSCREENINFO, &fbs.finfo) == -1)
 	{
 		ERROR("Error reading fixed information");
 		exit(2);
@@ -56,20 +57,20 @@ void OpenBuffer(void)
 
 	if (fbs.oinfo.bits_per_pixel == 8 || fbs.finfo.visual == FB_VISUAL_DIRECTCOLOR)
 	{
-		if (ioctl(fileno(fbs.fbfd), FBIOGETCMAP, &ocmap) == -1)
+		if (ioctl(fileno(fbs.fbf), FBIOGETCMAP, &ocmap) == -1)
 		{
 			ERROR("ERROR: ioctl FBIOGETCMAP");
 			exit(1);
 		}
 	}
 
-	if (ioctl(fileno(fbs.fbfd), FBIOGET_VSCREENINFO, &fbs.vinfo) == -1)
+	if (ioctl(fileno(fbs.fbf), FBIOGET_VSCREENINFO, &fbs.vinfo) == -1)
 	{
 		ERROR("ERROR: ioctl FBIOGET_VSCREENINFO");
 		exit(1);
 	}
 
-	if (ioctl(fileno(fbs.fbfd), FBIOGET_FSCREENINFO, &fbs.finfo) == -1)
+	if (ioctl(fileno(fbs.fbf), FBIOGET_FSCREENINFO, &fbs.finfo) == -1)
 	{
 		ERROR("ERROR: ioctl FBIOGET_FSCREENINFO");
 		exit(1);
@@ -77,7 +78,7 @@ void OpenBuffer(void)
 
 	page_mask = getpagesize() - 1;
 	fbs.fboffset = (unsigned long) (fbs.finfo.smem_start) & page_mask;
-	fbs.fbp = (char *) mmap(0, fbs.finfo.smem_len + fbs.fboffset, PROT_READ | PROT_WRITE, MAP_SHARED, fileno(fbs.fbfd), 0);
+	fbs.fbp = (char *) mmap(0, fbs.finfo.smem_len + fbs.fboffset, PROT_READ | PROT_WRITE, MAP_SHARED, fileno(fbs.fbf), 0);
 
 	if ((int) fbs.fbp == -1)
 	{
@@ -92,9 +93,9 @@ void OpenBuffer(void)
  */
 void CloseBuffer(void)
 {
-	if (fbs.fbfd) 
+	if (fbs.fbf) 
 	{
-		fclose(fbs.fbfd);
+		fclose(fbs.fbf);
 	}
 }
 
@@ -115,3 +116,4 @@ void ResetScreen(void)
 		for (p = fbs.fbp + fbs.fboffset; len--; p++) *p = i;
 	}	
 }
+

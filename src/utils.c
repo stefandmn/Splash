@@ -278,7 +278,6 @@ unsigned long hex2dec(char* hexstr)
 	return decnum;
 }
 
-
 /**
  * Create as 16bit color map from a RGB representation.
  *

@@ -118,8 +118,8 @@ typedef struct
  */
 typedef struct 
 {
-	FILE *fbfd;							/* Handler of GraphicStruct. */
-	char *fbp;							/* Buffer. */
+	FILE *fbf;							/* Handler */
+	char *fbp;							/* Buffer */
 	int fboffset;
 	struct fb_var_screeninfo vinfo;
 	struct fb_fix_screeninfo finfo;

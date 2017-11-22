@@ -12,7 +12,7 @@ if [ "$1" == "configure" ]; then
 	update-initramfs -u >/dev/null 2>&1
 
 	# Restart the service (if is the case)
-	if [ $(ps -ef | grep "splash" | grep -v "grep" | wc -l) -ne 0 ]; then
+	if [ $(ps -ef | grep "splash" | grep -v "grep" | grep -v "apt" | wc -l) -ne 0 ]; then
 		service clue-splash restart
 	fi
 fi
