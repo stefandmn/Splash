@@ -104,16 +104,6 @@ typedef struct
 } CmdData;
 
 /**
- * Resources file structure to load and manipulate graphical resources
- */
-typedef struct
-{
-	char path[255];
-	unsigned long size;
-	unsigned char *data;
-} File;
-
-/**
  * @brief Structure relative of screen characteristics.
  */
 typedef struct 
@@ -186,16 +176,6 @@ unsigned int get16bitColorFrom32bit(int32_t color);
  * @return 16bit color map
  */
 unsigned int get16bitColorFromHEX(char *color);
-
-
-/**
- * Load graphical resource from a file
- *
- * @param filename file name
- * @return Resource structure containing all the details and references about
- *			specified graphical resource.
- */
-File getFile(char *filename);
 
 /**
  * Check is a string pointer starts with a specific sub-string (managed as pointer)

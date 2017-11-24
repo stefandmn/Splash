@@ -43,6 +43,8 @@ CmdData SetImageProps(CmdData data);
 
 void DrawImage(CmdData data);
 
+void OverdrawImage(CmdData data);
+
 int GetImageSize(char *imgfile, int *x, int *y);
 
 int GetImageBuffer(char *imgfile, unsigned char *buffer, unsigned char **alpha, int x,int y);

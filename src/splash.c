@@ -348,6 +348,11 @@ int main(int argc, char **argv)
 					DEBUG("Removing old shape from screen");
 					OverdrawShape(prevdata);
 				}
+				else if(data.id == 'i' && prevdata.id == 'i')
+				{
+					DEBUG("Removing old image from screen");
+					OverdrawImage(prevdata);
+				}
 			}
 		}
 	}

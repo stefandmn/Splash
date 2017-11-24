@@ -27,8 +27,8 @@ done
 
 if [ "$splash" = "y" ]; then
 	if [ -x /opt/clue/bin/splash ]; then
-		/opt/clue/bin/splash --picture=640x360@splash
-		/opt/clue/bin/splash --message="820x650@starting services.."
+		/opt/clue/bin/splash --image=splash.png
+		/opt/clue/bin/splash --message="starting services.." -x820 -y700
 	fi
 fi
 

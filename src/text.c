@@ -30,17 +30,18 @@ CmdData SetTextProps(CmdData data)
 			}
 			else
 			{
-				if(!startsWith(tmpval, "/"))
+				if(!startsWith(tmpval, "/") && !startsWith(tmpval, "./"))
 				{
 					if(!startsWith(tmpval, "fonts/"))
 					{
 						strcpy(value, RESPATH);
-						strcat(value, "fonts/");
+						strcat(value, "/fonts/");
 						strcat(value, tmpval);
 					}
 					else
 					{
 						strcpy(value, RESPATH);
+						strcat(value, "/");
 						strcat(value, tmpval);
 					}
 				}
@@ -53,11 +54,23 @@ CmdData SetTextProps(CmdData data)
 				if(!endsWith(value, ".ttf")) strcat(value, ".ttf");
 			}			
 		}
-		else strcpy(value, DEFTXT_FPATH);
+		else 
+		{
+			strcpy(value, RESPATH);
+			strcat(value, "/");
+			strcat(value, DEFTXT_FPATH);
+		}
 
 		data = setDataProperty(data, "fontfile", value);
 	}
-	else data = setDataProperty(data, "fontfile", DEFTXT_FPATH);
+	else 
+	{
+		strcpy(value, RESPATH);
+		strcat(value, "/");
+		strcat(value, DEFTXT_FPATH);
+			
+		data = setDataProperty(data, "fontfile", value);
+	}
 
 	//font size
 	if(hasDataProperty(data, "fontsize"))
@@ -137,12 +150,47 @@ void OverdrawText(CmdData data)
  */
 void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned short int color, int spacing)
 {
-	int n, y, x, id;
+	int i=0, n, y, x, id, rc;
 	double z;
 	int fontHeight = 0, fontWidth = 0;
-	File fontfile = getFile(fontname);
+	
+	struct stat fileinfo;
+	unsigned long fontsize;
+	unsigned char *fontdata;
 
-	if(fontfile.size > 0 && fontfile.data != NULL)
+	if(fontname != NULL)
+	{
+		rc = stat(fontname, &fileinfo);
+
+		if (rc)
+		{
+			ERROR("Can not open resource file: %s", fontname);
+			fontdata = NULL;
+			fontsize = -1;
+		}
+		else
+		{
+			fontsize = fileinfo.st_size;
+			fontdata = (unsigned char*) malloc(fontsize + 100);
+			int fd = open(fontname, O_RDONLY);
+
+			while (i < fontsize)
+			{
+				rc = read(fd, fontdata + i, fontsize - i);
+				i += rc;
+			}
+
+			close(fd);
+		}
+	}
+	else
+	{
+		ERROR("Invalid font file path: %s", fontname);		
+		fontdata = NULL;
+		fontsize = -1;
+	}	
+
+	if(fontsize > 0 && fontdata!= NULL)
 	{
 		FT_Library library;
 		FT_Face face;
@@ -154,7 +202,7 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 		int tsize = text[strlen(text) - 1] == '\0' ? strlen(text) - 1 : strlen(text);
 
 		FT_Init_FreeType(&library);
-		FT_New_Memory_Face(library, fontfile.data, fontfile.size, 0, &face);
+		FT_New_Memory_Face(library, fontdata, fontsize, 0, &face);
 		FT_Set_Char_Size(face, size * 64, 0, 72, 0);
 		FT_Set_Pixel_Sizes(face, 0, size);
 		FT_UInt glyph_index;
@@ -211,7 +259,7 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 			}
 		}
 
-		free(fontfile.data);
+		free(fontdata);
 		FT_Done_Face(face);
 		FT_Done_FreeType(library);
 	}

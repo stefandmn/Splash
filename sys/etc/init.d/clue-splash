@@ -39,19 +39,18 @@ case "$1" in
 			if [ ! -f /etc/init.d/clue-mcpi ] || [ ! -f /etc/rc${RUNLEVEL}.d/S*clue-mcpi ]; then
 				IPADDR=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
 				IPADDR=`echo "$IPADDR" | tr "\n" " "`
-				$DAEMON --picture=640x360@splash
-				$DAEMON --message="780x650@Clue is running using ${IPADDR}"
+				$DAEMON --message="Clue is running: ${IPADDR}" -x780 -y700
 			else
-				$DAEMON --picture=640x360@splash
-				$DAEMON --message="820x650@starting media center.." --exit=30
+				$DAEMON --message="starting MCPi.." -x820 -y700
+				$DAEMON --exit=30
 			fi
 		fi
 		;;
     stop)
     	if [ "$splash" = "y" ]; then
     		$DAEMON --exit
-			$DAEMON --picture=640x360@*splash
-			$DAEMON --message="820x650@stopping services.."
+			$DAEMON --image=splash.png
+			$DAEMON --message="stopping services.." -x820 -y700
 			sleep 1
 		fi
 		;;
