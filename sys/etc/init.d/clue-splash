@@ -35,7 +35,6 @@ done
 case "$1" in
     start)
     	if [ "$splash" = "y" ]; then
-    		$DAEMON --console
 			if [ ! -f /etc/init.d/clue-mcpi ] || [ ! -f /etc/rc${RUNLEVEL}.d/S*clue-mcpi ]; then
 				IPADDR=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
 				IPADDR=`echo "$IPADDR" | tr "\n" " "`
@@ -48,8 +47,7 @@ case "$1" in
 		;;
     stop)
     	if [ "$splash" = "y" ]; then
-    		$DAEMON --exit
-			$DAEMON --image=splash -k
+			$DAEMON --image=splash -k -r
 			$DAEMON --message="stopping services.." --ypoint=-34
 			sleep 1
 		fi
