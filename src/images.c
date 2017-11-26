@@ -74,33 +74,17 @@ CmdData SetImageProps(CmdData data)
 	if(hasDataProperty(data, "enlarge"))
 	{
 		strcpy(tmpval, getDataProperty(data, "enlarge"));
-		if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "enlarge", 0);
+		if(strcmp(tmpval, "") == 0) data = setBoolDataProperty(data, "enlarge", false);
 	}
-	else data = setIntDataProperty(data, "enlarge", 0);
+	else data = setBoolDataProperty(data, "enlarge", false);
 
 	// stretch
 	if(hasDataProperty(data, "stretch"))
 	{
 		strcpy(tmpval, getDataProperty(data, "stretch"));
-		if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "stretch", 0);
+		if(strcmp(tmpval, "") == 0) data = setBoolDataProperty(data, "stretch", false);
 	}
-	else data = setIntDataProperty(data, "stretch", 0);
-
-	// iaspect
-	if(hasDataProperty(data, "iaspect"))
-	{
-		strcpy(tmpval, getDataProperty(data, "iaspect"));
-		if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "iaspect", 0);
-	}
-	else data = setIntDataProperty(data, "iaspect", 0);
-
-	// caspect
-	if(hasDataProperty(data, "caspect"))
-	{
-		strcpy(tmpval, getDataProperty(data, "caspect"));
-		if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "caspect", 0);
-	}
-	else data = setIntDataProperty(data, "caspect", 1);
+	else data = setBoolDataProperty(data, "stretch", false);
 	
 	return data;	
 }
@@ -116,7 +100,7 @@ void DrawImage(CmdData data)
 	__drawImage(data.value, data.xpoint, data.ypoint,
 			getIntDataProperty(data, "rotate"),
 			getIntDataProperty(data, "stretch"),
-			getIntDataProperty(data, "enlarge"));
+			getIntDataProperty(data, "enlarge"), false);
 }
 
 void OverdrawImage(CmdData data)
@@ -130,7 +114,7 @@ void OverdrawImage(CmdData data)
 	__drawImage(data.value, data.xpoint, data.ypoint,
 			getIntDataProperty(data, "rotate"),
 			getIntDataProperty(data, "stretch"),
-			getIntDataProperty(data, "enlarge"));
+			getIntDataProperty(data, "enlarge"), true);
 }
 
 int GetImageSize(char *imgfile, int *x, int *y)
@@ -147,7 +131,7 @@ int GetImageBuffer(char *imgfile, unsigned char *buffer, unsigned char **alpha, 
 	else if(isBmpImage(imgfile)) return GetBmpImageBuffer(imgfile, buffer, alpha, x, y);
 }
 
-void __drawImage(char *imgfile, int x_offs, int y_offs, int rotate, int stretch, int enlarge)
+void __drawImage(char *imgfile, int x_offs, int y_offs, int rotate, bool stretch, bool enlarge, bool cleanup)
 {
 	struct ImageInfo imginfo;
 	unsigned char *image = NULL;
@@ -174,7 +158,7 @@ void __drawImage(char *imgfile, int x_offs, int y_offs, int rotate, int stretch,
 
 	if(GetImageSize(imgfile, &x_size, &y_size) == STATUS_OK)
 	{
-		if(!(image = (unsigned char*)malloc(x_size * y_size * 3)))
+		if(!(image = (unsigned char*) malloc(x_size * y_size * 3)))
 		{
 			ERROR("Out of memory: %s", imgfile);
 			goto error;
@@ -216,14 +200,13 @@ void __drawImage(char *imgfile, int x_offs, int y_offs, int rotate, int stretch,
 
 	if(stretch)
 	{
-		DEBUG("Applying image fit to screen size: %dx%d", screen_width, screen_height);
-		doFitToScreen(&imginfo, screen_width, screen_height, 1, 1);
-	}
-
-	if(enlarge)
-	{
-		DEBUG("Applying image enlarge: %dx%d", screen_width, screen_height);
+		DEBUG("Displaying stretched image in full screen: %dx%d", screen_width, screen_height);
 		doEnlarge(&imginfo, screen_width, screen_height, 1);
+	}
+	else if(enlarge)
+	{
+		DEBUG("Displaying enlarged image in full screen: %dx%d", screen_width, screen_height);
+		doEnlarge(&imginfo, screen_width, screen_height, 0);
 	}
 
 	if(x_offs == 0)
@@ -250,151 +233,178 @@ void __drawImage(char *imgfile, int x_offs, int y_offs, int rotate, int stretch,
 	if(x_offs + imginfo.width > x_stride) x_offs = 0;
 	if(y_offs + imginfo.height > fbs.vinfo.yres) y_offs = 0;
 	
-	count = imginfo.width * imginfo.height;
-	DEBUG("Preparing image buffer at position %dx%d, having dimension %dx%d", x_offs, y_offs, imginfo.width, imginfo.height);
-
-	switch(fbs.vinfo.bits_per_pixel)
+	if(!cleanup)
 	{
-		case 8:
-			bp = 1;
-			c_fbbuff = (unsigned char *) malloc(count * sizeof(unsigned char));
-			for(i = 0; i < count; i++)
-				c_fbbuff[i] = (((imginfo.rgb[i*3] >> 5) & 7) << 5) | 
-					(((imginfo.rgb[i*3+1] >> 5) & 7) << 2) | 
-					((imginfo.rgb[i*3+2] >> 6) & 3);
-			fbbuff = (char *) c_fbbuff;
-			break;
-		case 15:
-			bp = 2;
-			s_fbbuff = (unsigned short *) malloc(count * sizeof(unsigned short));
-			for(i = 0; i < count ; i++)
-				s_fbbuff[i] = (((imginfo.rgb[i*3] >> 3) & 31) << 10) | 
-					(((imginfo.rgb[i*3+1] >> 3) & 31) << 5) | 
-					((imginfo.rgb[i*3+2] >> 3) & 31);
-			fbbuff = (char *) s_fbbuff;
-			break;
-		case 16:
-			bp = 2;
-			s_fbbuff = (unsigned short *) malloc(count * sizeof(unsigned short));
-			for(i = 0; i < count ; i++)
-				s_fbbuff[i] = (((imginfo.rgb[i*3] >> 3) & 31) << 11) | 
-					(((imginfo.rgb[i*3+1] >> 2) & 63) << 5) | 
-					((imginfo.rgb[i*3+2] >> 3) & 31);
-			fbbuff = (char *) s_fbbuff;
-			break;
-		case 24:
-		case 32:
-			bp = 4;
-			i_fbbuff = (unsigned int *) malloc(count * sizeof(unsigned int));
-			for(i = 0; i < count ; i++)
-				i_fbbuff[i] = ((imginfo.rgb[i*3] << 16) & 0xFF0000) | 
-						((imginfo.rgb[i*3+1] << 8) & 0xFF00) | 
-						(imginfo.rgb[i*3+2] & 0xFF);
-			fbbuff = (char *) i_fbbuff;
-			break;
-		default:
-			ERROR("Unsupported video mode! You've got: %d bpp", fbs.vinfo.bits_per_pixel);
-			goto error;
-	}
+		count = imginfo.width * imginfo.height;
+		DEBUG("Preparing Image buffer at %dx%d, with dimension %dx%d", x_offs, y_offs, imginfo.width, imginfo.height);
 
-	xc = (imginfo.width > x_stride) ? x_stride : imginfo.width;
-	yc = (imginfo.height > fbs.vinfo.yres_virtual) ? fbs.vinfo.yres_virtual : imginfo.height;
-
-	if(bp == 1)
-	{
-		int j;
-		int rs, gs, bs;
-		int r = 8, g = 8, b = 4;
-
-		if (ioctl(fbs.fbf, FBIOGETCMAP, &map_back) < 0)
+		switch(fbs.vinfo.bits_per_pixel)
 		{
-			ERROR("Error getting colormap");
-			goto error;
+			case 8:
+				bp = 1;
+				c_fbbuff = (unsigned char *) malloc(count * sizeof(unsigned char));
+				for(i = 0; i < count; i++)
+					c_fbbuff[i] = (((imginfo.rgb[i*3] >> 5) & 7) << 5) | 
+						(((imginfo.rgb[i*3+1] >> 5) & 7) << 2) | 
+						((imginfo.rgb[i*3+2] >> 6) & 3);
+				fbbuff = (char *) c_fbbuff;
+				break;
+			case 15:
+				bp = 2;
+				s_fbbuff = (unsigned short *) malloc(count * sizeof(unsigned short));
+				for(i = 0; i < count ; i++)
+					s_fbbuff[i] = (((imginfo.rgb[i*3] >> 3) & 31) << 10) | 
+						(((imginfo.rgb[i*3+1] >> 3) & 31) << 5) | 
+						((imginfo.rgb[i*3+2] >> 3) & 31);
+				fbbuff = (char *) s_fbbuff;
+				break;
+			case 16:
+				bp = 2;
+				s_fbbuff = (unsigned short *) malloc(count * sizeof(unsigned short));
+				for(i = 0; i < count ; i++)
+					s_fbbuff[i] = (((imginfo.rgb[i*3] >> 3) & 31) << 11) | 
+						(((imginfo.rgb[i*3+1] >> 2) & 63) << 5) | 
+						((imginfo.rgb[i*3+2] >> 3) & 31);
+				fbbuff = (char *) s_fbbuff;
+				break;
+			case 24:
+			case 32:
+				bp = 4;
+				i_fbbuff = (unsigned int *) malloc(count * sizeof(unsigned int));
+				for(i = 0; i < count ; i++)
+					i_fbbuff[i] = ((imginfo.rgb[i*3] << 16) & 0xFF0000) | 
+							((imginfo.rgb[i*3+1] << 8) & 0xFF00) | 
+							(imginfo.rgb[i*3+2] & 0xFF);
+				fbbuff = (char *) i_fbbuff;
+				break;
+			default:
+				ERROR("Unsupported video mode! You've got: %d bpp", fbs.vinfo.bits_per_pixel);
+				goto error;
 		}
 
-		map332.red = red;
-		map332.green = green;
-		map332.blue = blue;
+		xc = (imginfo.width > x_stride) ? x_stride : imginfo.width;
+		yc = (imginfo.height > fbs.vinfo.yres_virtual) ? fbs.vinfo.yres_virtual : imginfo.height;
 
-		rs = 256 / (r - 1);
-		gs = 256 / (g - 1);
-		bs = 256 / (b - 1);
-
-		for (j = 0; j < 256; j++)
+		if(bp == 1)
 		{
-			map332.red[j]   = (rs * ((j / (g * b)) % r)) * 255;
-			map332.green[j] = (gs * ((j / b) % g)) * 255;
-			map332.blue[j]  = (bs * ((j) % b)) * 255;
-		}		
+			int j;
+			int rs, gs, bs;
+			int r = 8, g = 8, b = 4;
 
-		if (ioctl(fbs.fbf, FBIOPUTCMAP, &map332) < 0)
-		{
-			ERROR("Error putting colormap");
-			goto error;
-		}		
-	}
+			DEBUG("Adapting buffer map for low resolution image..");
 
-	fbptr = fbs.fbp + ((y_offs + fbs.vinfo.yoffset) * x_stride + x_offs) * bp;
-	imptr = fbbuff + (y_pan * imginfo.width + x_pan) * bp;
-
-	if(imginfo.alpha)
-	{
-		unsigned char * alphaptr;
-		int from, to, x;
-
-		alphaptr = imginfo.alpha + (y_pan * imginfo.width + x_pan);
-
-		for(i = 0; i < yc; i++, fbptr += x_stride * bp, imptr += imginfo.width * bp, alphaptr += imginfo.width)
-		{
-			for(x = 0; x<xc; x++)
+			if (ioctl(fbs.fbf, FBIOGETCMAP, &map_back) < 0)
 			{
-				int v;
+				ERROR("Error getting colormap");
+				goto error;
+			}
 
-				from = to = -1;
-				for(v = x; v<xc; v++)
+			map332.red = red;
+			map332.green = green;
+			map332.blue = blue;
+
+			rs = 256 / (r - 1);
+			gs = 256 / (g - 1);
+			bs = 256 / (b - 1);
+
+			for (j = 0; j < 256; j++)
+			{
+				map332.red[j]   = (rs * ((j / (g * b)) % r)) * 255;
+				map332.green[j] = (gs * ((j / b) % g)) * 255;
+				map332.blue[j]  = (bs * ((j) % b)) * 255;
+			}		
+
+			if (ioctl(fbs.fbf, FBIOPUTCMAP, &map332) < 0)
+			{
+				ERROR("Error putting colormap");
+				goto error;
+			}		
+		}
+
+		fbptr = fbs.fbp + ((y_offs + fbs.vinfo.yoffset) * x_stride + x_offs) * bp;
+		imptr = fbbuff + (y_pan * imginfo.width + x_pan) * bp;
+
+		if(imginfo.alpha)
+		{
+			unsigned char * alphaptr;
+			int from, to, x;
+
+			DEBUG("Applying alpha layer..");
+			alphaptr = imginfo.alpha + (y_pan * imginfo.width + x_pan);
+
+			for(i = 0; i < yc; i++, fbptr += x_stride * bp, imptr += imginfo.width * bp, alphaptr += imginfo.width)
+			{
+				for(x = 0; x<xc; x++)
 				{
-					if(from == -1)
+					int v;
+
+					from = to = -1;
+					for(v = x; v<xc; v++)
 					{
-						if(alphaptr[v] > 0x80) from = v;
-					}
-					else
-					{
-						if(alphaptr[v] < 0x80)
+						if(from == -1)
 						{
-							to = v;
-							break;
+							if(alphaptr[v] > 0x80) from = v;
+						}
+						else
+						{
+							if(alphaptr[v] < 0x80)
+							{
+								to = v;
+								break;
+							}
 						}
 					}
+
+					if(from == -1)
+						break;
+
+					if(to == -1) to = xc;
+
+					memcpy(fbptr + (from * bp), imptr + (from * bp), (to - from - 1) * bp);
+					x += to - from - 1;
 				}
-
-				if(from == -1)
-					break;
-
-				if(to == -1) to = xc;
-
-				memcpy(fbptr + (from * bp), imptr + (from * bp), (to - from - 1) * bp);
-				x += to - from - 1;
 			}
 		}
+		else
+		{
+			for(i = 0; i < yc; i++, fbptr += x_stride * bp, imptr += imginfo.width * bp)
+			{
+				memcpy(fbptr, imptr, xc * bp);
+			}
+		}
+
+		if(bp == 1)
+		{
+			if (ioctl(fbs.fbf, FBIOPUTCMAP, map_back) < 0)
+			{
+				ERROR("Error putting colormap");
+				goto error;
+			}		
+		}
+
+		DEBUG("Image representation has been done, deallocating mapping..");
+		munmap(fbs.fbp, x_stride * fbs.vinfo.yres_virtual * bp);
 	}
 	else
 	{
-		for(i = 0; i < yc; i++, fbptr += x_stride * bp, imptr += imginfo.width * bp)
-		{
-			memcpy(fbptr, imptr, xc * bp);
-		}
-	}
+		int x, y;
+		DEBUG("Overdrawing image buffer at position %dx%d, having dimension %dx%d", x_offs, y_offs, imginfo.width, imginfo.height);
 
-	if(bp == 1)
-	{
-		if (ioctl(fbs.fbf, FBIOPUTCMAP, map_back) < 0)
+		// Figure out where in memory to put the pixel
+		for (y = y_offs; y < y_offs + imginfo.height; y++)
 		{
-			ERROR("Error putting colormap");
-			goto error;
+			for (x = x_offs; x < x_offs + imginfo.width; x++)
+			{
+				// Draw rectangle borders
+				if ((y < y_offs) || (y > y_offs + imginfo.height - 1) ||
+					(x < x_offs) || (x > x_offs + imginfo.width - 1)) __drawPixel(x, y, 0);
+
+				// Fill rectangle
+				if ((y >= y_offs) && (y <= y_offs + imginfo.height - 1) &&
+					(x >= x_offs) && (x <= x_offs + imginfo.width - 1)) __drawPixel(x, y, 0);
+			}
 		}		
 	}
-
-	munmap(fbs.fbp, x_stride * fbs.vinfo.yres_virtual * bp);
 	
 error:
 	if(fbbuff != NULL) free(fbbuff);
@@ -406,6 +416,8 @@ error:
 		free(imginfo.rgb);
 		free(imginfo.alpha);
 	}
+
+	DEBUG("Image displayed, memory deallocated");
 }
 
 unsigned char* SimpleResize(unsigned char * orgin, int ox, int oy, int dx, int dy)
@@ -444,39 +456,6 @@ unsigned char* AlphaResize(unsigned char * alpha, int ox, int oy, int dx, int dy
 		p = alpha + (j * oy/dy * ox);
 		for(i=0,k=0; i<dx; i++)
 			l[k++] = p[i*ox/dx];
-	}
-	
-	return cr;
-}
-
-unsigned char* ColorAverageResize(unsigned char * orgin, int ox, int oy, int dx, int dy)
-{
-	unsigned char *cr,*p,*q;
-	int i,j,k,l,xa,xb,ya,yb;
-	int sq,r,g,b;
-	
-	assert(cr=(unsigned char*) malloc(dx*dy*3)); p=cr;
-	
-	for(j=0;j<dy;j++)
-	{
-		for(i=0;i<dx;i++,p+=3)
-		{
-			xa=i*ox/dx;
-			ya=j*oy/dy;
-			xb=(i+1)*ox/dx; if(xb>=ox) xb=ox-1;
-			yb=(j+1)*oy/dy; if(yb>=oy) yb=oy-1;
-			
-			for(l=ya,r=0,g=0,b=0,sq=0;l<=yb;l++)
-			{
-				q=orgin+((l*ox+xa)*3);
-				for(k=xa;k<=xb;k++,q+=3,sq++)
-				{
-					r+=q[0]; g+=q[1]; b+=q[2];
-				}
-			}
-			
-			p[0]=r/sq; p[1]=g/sq; p[2]=b/sq;
-		}
 	}
 	
 	return cr;
@@ -603,62 +582,6 @@ void doRotate(struct ImageInfo *i, int rot)
 			i->width = i->height;
 			i->height = t;
 		}
-	}
-}
-
-void doFitToScreen(struct ImageInfo *i, int screen_width, int screen_height, int ignoreaspect, int cal)
-{
-	if((i->width > screen_width) || (i->height > screen_height))
-	{
-		unsigned char * new_image, * new_alpha = NULL;
-		int nx_size = i->width, ny_size = i->height;
-
-		if(ignoreaspect)
-		{
-			if(i->width > screen_width)
-				nx_size = screen_width;
-			if(i->height > screen_height)
-				ny_size = screen_height;
-		}
-		else
-		{
-			if((i->height * screen_width / i->width) <= screen_height)
-			{
-				nx_size = screen_width;
-				ny_size = i->height * screen_width / i->width;
-			}
-			else
-			{
-				nx_size = i->width * screen_height / i->height;
-				ny_size = screen_height;
-			}
-		}
-
-		if(cal)
-		{
-			new_image = ColorAverageResize(i->rgb, i->width, i->height, nx_size, ny_size);
-		}
-		else
-		{
-			new_image = SimpleResize(i->rgb, i->width, i->height, nx_size, ny_size);
-		}
-
-		if(i->alpha)
-		{
-			new_alpha = AlphaResize(i->alpha, i->width, i->height, nx_size, ny_size);
-		}
-
-		if(i->do_free)
-		{
-			free(i->alpha);
-			free(i->rgb);
-		}
-
-		i->rgb = new_image;
-		i->alpha = new_alpha;
-		i->do_free = 1;
-		i->width = nx_size;
-		i->height = ny_size;
 	}
 }
 

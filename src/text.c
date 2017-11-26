@@ -148,23 +148,22 @@ void OverdrawText(CmdData data)
  * @param color the text color
  * @param spacing spacing between letters
  */
-void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned short int color, int spacing)
+void __drawText(char *text, int xc, int yc, char *fontfile, int size, unsigned short int color, int spacing)
 {
 	int i=0, n, y, x, id, rc;
-	double z;
-	int fontHeight = 0, fontWidth = 0;
+	int charWidth = 0, charHeight = 0, textWidth = 0;
 	
 	struct stat fileinfo;
 	unsigned long fontsize;
 	unsigned char *fontdata;
 
-	if(fontname != NULL)
+	if(fontfile != NULL)
 	{
-		rc = stat(fontname, &fileinfo);
+		rc = stat(fontfile, &fileinfo);
 
 		if (rc)
 		{
-			ERROR("Can not open resource file: %s", fontname);
+			ERROR("Can not open resource file: %s", fontfile);
 			fontdata = NULL;
 			fontsize = -1;
 		}
@@ -172,7 +171,7 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 		{
 			fontsize = fileinfo.st_size;
 			fontdata = (unsigned char*) malloc(fontsize + 100);
-			int fd = open(fontname, O_RDONLY);
+			int fd = open(fontfile, O_RDONLY);
 
 			while (i < fontsize)
 			{
@@ -185,7 +184,7 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 	}
 	else
 	{
-		ERROR("Invalid font file path: %s", fontname);		
+		ERROR("Invalid font file path: %s", fontfile);		
 		fontdata = NULL;
 		fontsize = -1;
 	}	
@@ -214,24 +213,30 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 			metrics = &face->glyph->metrics;
 			FT_Render_Glyph(face->glyph, ft_render_mode_normal);
 
-			if ((metrics->horiBearingY / 64) > fontHeight)
+			if ((metrics->horiBearingY / 64) > charHeight)
 			{
-				fontHeight = (metrics->horiBearingY / 64);
+				charHeight = (metrics->horiBearingY / 64);
 			}
 
-			if (face->glyph->bitmap.width > fontWidth)
+			if (face->glyph->bitmap.width > charWidth)
 			{
-				fontWidth = face->glyph->bitmap.width;
+				charWidth = face->glyph->bitmap.width;
 			}
+			
+			textWidth += face->glyph->bitmap.width + spacing;
 		}
-
-		yc += fontHeight;
+		
+		//adapt text position
+		SetPosition(&xc, &yc, textWidth, size);
+		
+		DEBUG("Preparing Message buffer at %dx%d, with dimension %dx%d", xc, yc, textWidth, size);
+		yc += charHeight;
 
 		for (n = 0; n < strlen(text); n++)
 		{
 			if (text[n] == ' ')
 			{
-				xc += fontWidth;
+				xc += charWidth;
 			}
 			else
 			{
@@ -246,16 +251,16 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 					{
 						if (face->glyph->bitmap.buffer[y * face->glyph->bitmap.width + x] > 0)
 						{
-							if (x + xc + z >= 0 && y + yc - (metrics->horiBearingY / 64) >= 0)
+							if (x + xc >= 0 && y + yc - (metrics->horiBearingY / 64) >= 0)
 							{
-								long int location = (x + xc + z + fbs.vinfo.xoffset) * (fbs.vinfo.bits_per_pixel / 8) + (y + yc - (metrics->horiBearingY / 64) + fbs.vinfo.yoffset) * fbs.finfo.line_length;
+								long int location = (x + xc + fbs.vinfo.xoffset) * (fbs.vinfo.bits_per_pixel / 8) + (y + yc - (metrics->horiBearingY / 64) + fbs.vinfo.yoffset) * fbs.finfo.line_length;
 								if ((fbs.fbp + location)) * ((unsigned short int*) (fbs.fbp + location)) = color;
 							}
 						}
 					}
 				}
 
-				xc += face->glyph->bitmap.width + z + spacing;
+				xc += face->glyph->bitmap.width + spacing;
 			}
 		}
 
@@ -264,6 +269,6 @@ void __drawText(char *text, int xc, int yc, char *fontname, int size, unsigned s
 		FT_Done_FreeType(library);
 	}
 	
-	if(fontname != NULL) free(fontname);
+	if(fontfile != NULL) free(fontfile);
 }
 

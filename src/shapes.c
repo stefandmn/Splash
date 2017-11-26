@@ -5,6 +5,7 @@
  */
 
 #include "shapes.h"
+#include "buffer.h"
 
 
 CmdData SetShapeProps(CmdData data)
@@ -198,19 +199,19 @@ void OverdrawShape(CmdData data)
 {
 	if(indexOf(strtrim(data.value), "line") >= 0)
 	{
-		OverdrawLine(data);
+		WipeLine(data);
 	}
 	else if(strcmp(strtrim(data.value), "rectangle") == 0)
 	{
-		OverdrawRectangle(data);
+		WipeRectangle(data);
 	}
 	else if(strcmp(strtrim(data.value), "circle") == 0)
 	{
-		OverdrawCircle(data);
+		WipeCircle(data);
 	}
 	else if(strcmp(strtrim(data.value), "progressbar") == 0)
 	{
-		OverdrawProgressBar(data);
+		WipeProgressBar(data);
 	}
 }
 
@@ -243,7 +244,7 @@ void DrawLine(CmdData data)
 	}
 }
 
-void OverdrawLine(CmdData data)
+void WipeLine(CmdData data)
 {
 	DEBUG("Overdrawing Line shape for removal: [%s] >> x=%d, y=%d, x2=%d, y2=%d", data.value, data.xpoint, data.ypoint, getIntDataProperty(data, "x2point"), getIntDataProperty(data, "y2point") );
 	
@@ -286,7 +287,7 @@ void DrawRectangle(CmdData data)
 		getColorDataProperty(data, "fillcolor"));
 }
 
-void OverdrawRectangle(CmdData data)
+void WipeRectangle(CmdData data)
 {
 	DEBUG("Overdrawing Rectangle shape for removal: [%s] >> x=%d, y=%d, width=%d, height=%d", data.value, data.xpoint, data.ypoint, getIntDataProperty(data, "width"), getIntDataProperty(data, "height"));
 	
@@ -314,7 +315,7 @@ void DrawCircle(CmdData data)
 		getColorDataProperty(data, "fillcolor"));
 }
 
-void OverdrawCircle(CmdData data)
+void WipeCircle(CmdData data)
 {
 	DEBUG("Overdrawing Circle shape from command: [%s] >> x=%d, y=%d, radius=%d", data.value, data.xpoint, data.ypoint, getIntDataProperty(data, "radius"));
 	
@@ -346,7 +347,7 @@ void DrawProgressBar(CmdData data)
 		getColorDataProperty(data, "backgroundcolor"));
 }
 
-void OverdrawProgressBar(CmdData data)
+void WipeProgressBar(CmdData data)
 {
 	DEBUG("Overdrawing ProgressBar shape for removal: [%s] >> x=%d, y=%d, width=%d, height=%d", data.value, data.xpoint, data.ypoint, getIntDataProperty(data, "width"), getIntDataProperty(data, "height"));
 	
@@ -397,6 +398,11 @@ int __32bitDrawPixel(int x, int y, int32_t color)
 void __drawHorizontalLine(int x, int y, int x2, int color)
 {
 	int xx;
+	
+	//adapt line position and dimension
+	if(x2 < 0) x2 = fbs.vinfo.xres + x2;
+	SetPosition(&x, &y, x2-x, 1);
+		
 	for (xx = x; xx < x2; xx++)
 	{
 		__drawPixel(xx, y, color);
@@ -406,6 +412,11 @@ void __drawHorizontalLine(int x, int y, int x2, int color)
 void __drawVerticalLine(int x, int y, int y2, int color)
 {
 	int yy;
+	
+	//adapt line position and dimension
+	if(y2 < 0) y2 = fbs.vinfo.xres + y2;
+	SetPosition(&x, &y, 1, y2-y);
+	
 	for (yy = y; yy < y2; yy++)
 	{
 		__drawPixel(x, yy, color);
@@ -459,9 +470,12 @@ void __drawLine(int x1, int y1, int x2, int y2, int color)
 	}
 }
 
-void __drawCircle(int cx, int cy, int radius, int linecolor, int linewidth, int fillcolor)
+void __drawCircle(int xc, int yc, int radius, int linecolor, int linewidth, int fillcolor)
 {
 	int width;
+	
+	//adapt circle position
+	SetPosition(&xc, &xc, radius, radius);
 	
 	for (width = 0; width < linewidth; width++)
 	{
@@ -471,14 +485,14 @@ void __drawCircle(int cx, int cy, int radius, int linecolor, int linewidth, int 
 		
 		while (x >= y)
 		{
-			__drawPixel(cx + x, cy + y, linecolor);
-			__drawPixel(cx - x, cy + y, linecolor);
-			__drawPixel(cx + x, cy - y, linecolor);
-			__drawPixel(cx - x, cy - y, linecolor);
-			__drawPixel(cx + y, cy + x, linecolor);
-			__drawPixel(cx - y, cy + x, linecolor);
-			__drawPixel(cx + y, cy - x, linecolor);
-			__drawPixel(cx - y, cy - x, linecolor);
+			__drawPixel(xc + x, yc + y, linecolor);
+			__drawPixel(xc - x, yc + y, linecolor);
+			__drawPixel(xc + x, yc - y, linecolor);
+			__drawPixel(xc - x, yc - y, linecolor);
+			__drawPixel(xc + y, yc + x, linecolor);
+			__drawPixel(xc - y, yc + x, linecolor);
+			__drawPixel(xc + y, yc - x, linecolor);
+			__drawPixel(xc - y, yc - x, linecolor);
 
 			error += y;
 			y++;
@@ -504,14 +518,14 @@ void __drawCircle(int cx, int cy, int radius, int linecolor, int linewidth, int 
 			
 			while (x >= y)
 			{
-				__drawPixel(cx + x, cy + y, fillcolor);
-				__drawPixel(cx - x, cy + y, fillcolor);
-				__drawPixel(cx + x, cy - y, fillcolor);
-				__drawPixel(cx - x, cy - y, fillcolor);
-				__drawPixel(cx + y, cy + x, fillcolor);
-				__drawPixel(cx - y, cy + x, fillcolor);
-				__drawPixel(cx + y, cy - x, fillcolor);
-				__drawPixel(cx - y, cy - x, fillcolor);				
+				__drawPixel(xc + x, yc + y, fillcolor);
+				__drawPixel(xc - x, yc + y, fillcolor);
+				__drawPixel(xc + x, yc - y, fillcolor);
+				__drawPixel(xc - x, yc - y, fillcolor);
+				__drawPixel(xc + y, yc + x, fillcolor);
+				__drawPixel(xc - y, yc + x, fillcolor);
+				__drawPixel(xc + y, yc - x, fillcolor);
+				__drawPixel(xc - y, yc - x, fillcolor);				
 
 				error += y;
 				y++;
@@ -529,29 +543,39 @@ void __drawCircle(int cx, int cy, int radius, int linecolor, int linewidth, int 
 	}
 }
 
-void __drawRectangle(int xstart, int ystart, int width, int height, int linecolor, int linewidth, int fillcolor)
+void __drawRectangle(int xc, int yc, int width, int height, int linecolor, int linewidth, int fillcolor)
 {
 	int x, y;
 	
+	//adapt rectangle position
+	SetPosition(&xc, &yc, width, height);
+	
 	// Figure out where in memory to put the pixel
-	for (y = ystart; y < ystart + height; y++)
+	for (y = yc; y < yc + height; y++)
 	{
-		for (x = xstart; x < xstart + width; x++)
+		for (x = xc; x < xc + width; x++)
 		{
 			// Draw rectangle borders
-			if ((y < ystart + linewidth) || (y > ystart + height - linewidth - 1) ||
-				(x < xstart + linewidth) || (x > xstart + width - linewidth - 1)) __drawPixel(x, y, linecolor);
+			if ((y < yc + linewidth) || (y > yc + height - linewidth - 1) ||
+				(x < xc + linewidth) || (x > xc + width - linewidth - 1)) __drawPixel(x, y, linecolor);
 			
 			// Fill rectangle
-			if ((fillcolor >= 0) && (y >= ystart + linewidth) && (y <= ystart + height - linewidth - 1) &&
-				(x >= xstart + linewidth) && (x <= xstart + width - linewidth - 1)) __drawPixel(x, y, fillcolor);
+			if ((fillcolor >= 0) && (y >= yc + linewidth) && (y <= yc + height - linewidth - 1) &&
+				(x >= xc + linewidth) && (x <= xc + width - linewidth - 1)) __drawPixel(x, y, fillcolor);
 		}
 	}
 }
 
-int __drawProcessBar(int xstart, int ystart, int width, int height, int percent, int linecolor, int linewidth, int barcolor, int backgroundcolor)
+int __drawProcessBar(int xc, int yc, int width, int height, int percent, int linecolor, int linewidth, int barcolor, int backgroundcolor)
 {
-	__drawRectangle(xstart, ystart, width, height, linecolor, linewidth, -1);
-	__drawRectangle(xstart + linewidth, ystart + linewidth, ((width - linewidth - linewidth) * percent) / 100, height - (2 * linewidth), barcolor, 0, barcolor);
-	__drawRectangle(xstart + linewidth + ((width * percent) / 100), ystart + linewidth, ((width * (100 - percent)) / 100) - linewidth - linewidth, height - linewidth - linewidth, backgroundcolor, 0, backgroundcolor);
+	//adapt progressbar position
+	SetPosition(&xc, &yc, width, height);
+	
+	if(percent >= 0)
+	{
+		__drawRectangle(xc, yc, width, height, linecolor, linewidth, -1);
+	}
+	
+	__drawRectangle(xc + linewidth, yc + linewidth, ((width - linewidth - linewidth) * abs(percent)) / 100, height - (2 * linewidth), barcolor, 0, barcolor);
+	__drawRectangle(xc + linewidth + ((width * abs(percent)) / 100), yc + linewidth, ((width * (100 - abs(percent))) / 100) - linewidth - linewidth, height - linewidth - linewidth, backgroundcolor, 0, backgroundcolor);
 }

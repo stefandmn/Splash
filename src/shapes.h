@@ -35,18 +35,18 @@ void OverdrawShape(CmdData data);
 
 void DrawLine(CmdData data);
 
-void OverdrawLine(CmdData data);
+void WipeLine(CmdData data);
 
 void DrawRectangle(CmdData data);
 
-void OverdrawRectangle(CmdData data);
+void WipeRectangle(CmdData data);
 
 void DrawCircle(CmdData data);
 
-void OverdrawCircle(CmdData data);
+void WipeCircle(CmdData data);
 
 void DrawProgressBar(CmdData data);
 
-void OverdrawProgressBar(CmdData data);
+void WipeProgressBar(CmdData data);
 
 #endif

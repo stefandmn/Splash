@@ -12,7 +12,7 @@ Splash program is designed to support the following feature:
 
 1. `--image`   = prints a splash image on the graphical term.
 2. `--message` = displays a text message on the graphical screen.
-3. `--draw`    = displays graphical shapes and basic controls for data display, loading, etc.
+3. `--shape`   = draws graphical shapes and basic controls for data display, loading, etc.
 4. `--exit`    = exit from the splash application. It accepts also a delay as an optional parameter
 
 For the syntax details of each option please see **Running** chapter.

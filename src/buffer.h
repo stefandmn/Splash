@@ -34,4 +34,14 @@ void CloseBuffer(void);
  */
 void ResetScreen(void);
 
+/**
+ * Adapt object position
+ * 
+ * @param x Input horizontal position
+ * @param y Input vertical position
+ * @param width Width of graphical object
+ * @param height Height of graphical object
+ */
+void SetPosition(int *x, int *y, int width, int height);
+
 #endif

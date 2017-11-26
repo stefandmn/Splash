@@ -30,7 +30,7 @@ void SaveDataInMemory(CmdData data)
 
 	if (ShmID < 0)
 	{
-		 ERROR("    Shared memory can not be reserved for writing");
+		 ERROR("Shared memory can not be reserved for writing");
 		 return;
 	}
 
@@ -38,10 +38,10 @@ void SaveDataInMemory(CmdData data)
 
 	if ((int) ShmDAP == -1)
 	{
-		 ERROR("    Shared memory cannot be attached for writing");
+		 ERROR("Shared memory cannot be attached for writing");
 		 return;
 	}
-	else DEBUG("    Attached shared memory for writing");
+	else DEBUG("Attached shared memory for writing");
 
 	//set data
 	ShmDAP->id = data.id;
@@ -49,12 +49,12 @@ void SaveDataInMemory(CmdData data)
 	strcpy(ShmDAP->props, data.props);
 	ShmDAP->xpoint = data.xpoint;
 	ShmDAP->ypoint = data.ypoint;
-	DEBUG("    Writing command in memory: [%d] = %s", data.id, data.value != NULL ? data.value : "");
-	DEBUG("                              @point = (%d,%d)", data.xpoint, data.ypoint);
-	DEBUG("                              >props = %s", data.props);
+	DEBUG("Writing command in memory: [%d] = %s", data.id, data.value != NULL ? data.value : "");
+	DEBUG("    @point = (%d,%d)", data.xpoint, data.ypoint);
+	DEBUG("    >props = %s", data.props);
 
 	shmdt((void *) ShmDAP);
-	INFO("    Detached shared memory for writing");
+	INFO("Detached shared memory for writing");
 }
 
 CmdData GetMemoryData(void)
@@ -69,7 +69,7 @@ CmdData GetMemoryData(void)
 
 	if (ShmID < 0)
 	{
-		 ERROR("    Shared memory can not be reserved for reading");
+		 ERROR("Shared memory can not be reserved for reading");
 		 return data;
 	}
 
@@ -77,10 +77,10 @@ CmdData GetMemoryData(void)
 
 	if ((int) ShmDAP == -1)
 	{
-		 ERROR("    Shared memory cannot be attached for reading");
+		 ERROR("Shared memory cannot be attached for reading");
 		 return data;
 	}
-	else DEBUG("    Attached shared memory for reading");
+	else DEBUG("Attached shared memory for reading");
 
 	//set data
 	data.id = ShmDAP->id;
@@ -89,12 +89,12 @@ CmdData GetMemoryData(void)
 	data.xpoint = ShmDAP->xpoint;
 	data.ypoint = ShmDAP->ypoint;
 
-	DEBUG("    Reading command from memory: [%d] = %s", data.id, data.value != NULL ? data.value : "");
-	DEBUG("                                @point = (%d,%d)", data.xpoint, data.ypoint);
-	DEBUG("                                >props = %s", data.props);
+	DEBUG("Reading command from memory: [%d] = %s", data.id, data.value != NULL ? data.value : "");
+	DEBUG("    @point = (%d,%d)", data.xpoint, data.ypoint);
+	DEBUG("    >props = %s", data.props);
 
 	shmdt((void *) ShmDAP);
-	INFO("    Detached shared memory for reading");
+	INFO("Detached shared memory for reading");
 
 	return data;
 }
@@ -110,7 +110,7 @@ void CleanDataInMemory(void)
 	if (ShmID >= 0)
 	{
 		shmctl(ShmID, IPC_RMID, NULL);
-		DEBUG("    Released shared memory reference for writing");
+		DEBUG("Released shared memory reference for writing");
 	}
 }
 
@@ -144,13 +144,14 @@ CmdData GetInputData(int argc, char argv[])
 	static struct option options[] =
 	{
 		{"reset", no_argument, NULL, 'r'},
-		{"sticky", no_argument, NULL, 's'},
+		{"keep", no_argument, NULL, 'k'},
+		{"wipe", no_argument, NULL, 'w'},
 		{"exit", optional_argument, NULL, 'e'},
 		{"quit", optional_argument, NULL, 'q'},
-		{"draw", optional_argument, NULL, 'd'},
+		{"shape", optional_argument, NULL, 's'},
 		{"image", optional_argument, NULL, 'i'},
 		{"message", optional_argument, NULL, 'm'},
-		{"props", optional_argument, NULL, 'p'},
+		{"properties", optional_argument, NULL, 'p'},
 		{"xpoint", optional_argument, NULL, 'x'},
 		{"ypoint", optional_argument, NULL, 'y'},
 		{NULL, 0, NULL, 0}
@@ -163,7 +164,7 @@ CmdData GetInputData(int argc, char argv[])
 	strcpy(data.value, "");
 	strcpy(data.props, "");
 
-	while((opt = getopt_long(argc, argv, "rse::q::x::y::i:m:p:d:", options, NULL)) != -1)
+	while((opt = getopt_long(argc, argv, "rkwe::q::x::y::i:m:p:s:", options, NULL)) != -1)
 	{
 		if (optarg != NULL)
 		{
@@ -186,11 +187,16 @@ CmdData GetInputData(int argc, char argv[])
 				strcat(data.props, "reset=true");
 				break;
 
-			case 's':
+			case 'k':
 				if(strlen(data.props) > 0) strcat(data.props, ", ");
-				else strcat(data.props, "sticky=true");
+				strcat(data.props, "keep=true");
 				break;
-
+				
+			case 'w':
+				if(strlen(data.props) > 0) strcat(data.props, ", ");
+				strcat(data.props, "wipe=true");
+				break;
+				
 			case 'x':
 				if(strcmp(value, "") > 0) data.xpoint = atoi(value);
 					else data.xpoint = 0;
@@ -223,7 +229,7 @@ CmdData GetInputData(int argc, char argv[])
 
 			case 'm':
 			case 'i':
-			case 'd':
+			case 's':
 				if (data.id == 0) 
 				{
 					data.id = opt;
@@ -238,9 +244,9 @@ CmdData GetInputData(int argc, char argv[])
 		}
 	}
 	
-	DEBUG("    Reading command from input: [%d] = %s", data.id, data.value != NULL ? data.value : "");
-	DEBUG("                               @point = (%d,%d)", data.xpoint, data.ypoint);
-	DEBUG("                               >props = %s", data.props);
+	DEBUG("Reading command from input: [%d] = %s", data.id, data.value != NULL ? data.value : "");
+	DEBUG("    @point = (%d,%d)", data.xpoint, data.ypoint);
+	DEBUG("    >props = %s", data.props);
 	
 	return data;
 }
@@ -248,7 +254,7 @@ CmdData GetInputData(int argc, char argv[])
 /**
  * Synchronize input command data with graphical environment
  * 
- * @param data inpuc command data structure
+ * @param data input command data structure
  * @return improved and synched data structure
  */
 CmdData GetSyncData(CmdData data)
@@ -258,18 +264,18 @@ CmdData GetSyncData(CmdData data)
 	{
 		data = SetTextProps(data);
 	}
+	else if(data.id == 's') 
+	{
+		data = SetShapeProps(data);
+	}
 	else if(data.id == 'i') 
 	{
 		data = SetImageProps(data);
 	}
-	else if(data.id == 'd') 
-	{
-		data = SetShapeProps(data);
-	}
 	
-	DEBUG("    Synchronizing input command: [%d] = %s", data.id, data.value != NULL ? data.value : "");
-	DEBUG("                                @point = (%d,%d)", data.xpoint, data.ypoint);
-	DEBUG("                                >props = %s", data.props);
+	DEBUG("Synchronizing input command: [%d] = %s", data.id, data.value != NULL ? data.value : "");
+	DEBUG("    @point = (%d,%d)", data.xpoint, data.ypoint);
+	DEBUG("    >props = %s", data.props);
 	
 	return data;
 }
@@ -292,6 +298,7 @@ int main(int argc, char **argv)
 	//Extract absolute path of executable in order to identify related resources: picture and font files
 	readlink("/proc/self/exe", RESPATH, sizeof (RESPATH));
 	sprintf(RESPATH, "%s%s", dirname(dirname(RESPATH)), "/share/splash");
+	INFO("***** Start New Splash Session *****");
 
 	//read input arguments
 	DEBUG("Reading input data");
@@ -300,7 +307,7 @@ int main(int argc, char **argv)
 	// Main Workflow
 	if(!HasDataInMemory())
 	{
-		INFO("*** New process CREATEs console");
+		INFO("New process CREATEs console");
 
 		//open graphical console
 		OpenGraphicsOnConsole(&console);
@@ -313,7 +320,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		INFO("*** New process OPENs console");
+		INFO("New process OPENs console");
 
 		//initialize the screen
 		OpenBuffer();
@@ -321,7 +328,7 @@ int main(int argc, char **argv)
 		//reset the screen
 		if(getBoolDataProperty(data, "reset"))
 		{
-			LOGGER("    Reset the screen");
+			DEBUG("Reset the screen");
 			ResetScreen();
 			
 			//delete reserved memory buffer
@@ -330,28 +337,31 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			//read old data from memory and parse it
-			DEBUG("Reading memory buffer");
-			prevdata = GetMemoryData();
+			if(!getBoolDataProperty(data, "wipe"))
+			{
+				//read old data from memory and parse it
+				DEBUG("Reading memory buffer");
+				prevdata = GetMemoryData();
 
-			//evaluate persistency
-			if(!getBoolDataProperty(prevdata, "sticky"))
-			{	
-				//remove old message
-				if(data.id == 'm' && prevdata.id == 'm')
-				{
-					DEBUG("Removing old text message from screen");
-					OverdrawText(prevdata);
-				}
-				else if(data.id == 'd' && prevdata.id == 'd')
-				{
-					DEBUG("Removing old shape from screen");
-					OverdrawShape(prevdata);
-				}
-				else if(data.id == 'i' && prevdata.id == 'i')
-				{
-					DEBUG("Removing old image from screen");
-					OverdrawImage(prevdata);
+				//evaluate persistency
+				if(!getBoolDataProperty(prevdata, "keep"))
+				{	
+					//remove old message
+					if(data.id == 'm' && prevdata.id == 'm')
+					{
+						DEBUG("Request to overdraw old Message..");
+						OverdrawText(prevdata);
+					}
+					else if(data.id == 's' && prevdata.id == 's' && !(strcmp(data.value, "progressbar") == 0 && getIntDataProperty(data, "percent") < 0))
+					{
+						DEBUG("Request to overdraw old Shape..");
+						OverdrawShape(prevdata);
+					}
+					else if(data.id == 'i' && prevdata.id == 'i')
+					{
+						DEBUG("Request to overdraw old Image..");
+						OverdrawImage(prevdata);
+					}
 				}
 			}
 		}
@@ -361,34 +371,55 @@ int main(int argc, char **argv)
 	data = GetSyncData(data);
 
 	// run actual command
-	if(data.id == 'i')
+	if(data.id == 'm')
 	{
-		//display new image
-		INFO("Request for Picture..");
-		DrawImage(data);
+		if(!getBoolDataProperty(data, "wipe"))
+		{
+			INFO("Request to draw Message..");
+			DrawText(data);
+		}
+		else
+		{
+			INFO("Request to wipe Message..");
+			OverdrawText(data);
+		}
 	}
-	else if(data.id == 'm')
+	else if(data.id == 's')
 	{
-		//display new text message
-		INFO("Request for Message..");
-		DrawText(data);
+		if(!getBoolDataProperty(data, "wipe"))
+		{
+			INFO("Request to draw Shape..");
+			DrawShape(data);
+		}
+		else
+		{
+			INFO("Request to wipe Shape..");
+			OverdrawShape(data);
+		}
 	}
-	else if(data.id == 'd')
+	else if(data.id == 'i')
 	{
-		//display new shape
-		INFO("Request for Drawing..");
-		DrawShape(data);
-	}	
+		if(!getBoolDataProperty(data, "wipe"))
+		{
+			INFO("Request to draw Image..");
+			DrawImage(data);
+		}
+		else
+		{
+			INFO("Request to wipe Image..");
+			OverdrawImage(data);
+		}		
+	}
 
 	//process EXIT-REQUEST event
 	if(data.id == 'e' || data.id == 'q')
 	{
-		INFO("Request for Exit..");
+		INFO("Request to Exit..");
 
 		if(getIntDataProperty(data, "exitdelay") > 0)
 		{
 			int delay = getIntDataProperty(data, "exitdelay");
-			LOGGER("    Sleep %d seconds for exit", delay);
+			DEBUG("Sleeping %d seconds before exit", delay);
 			sleep(delay);
 		}
 
@@ -406,9 +437,12 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		// write the current transaction in memory
-		DEBUG("Writing memory buffer");
-		SaveDataInMemory(data);
+		if(!getBoolDataProperty(data, "wipe") && !(strcmp(data.value, "progressbar") == 0 && getIntDataProperty(data, "percent") < 0))
+		{
+			// write the current transaction in memory
+			DEBUG("Writing memory buffer");
+			SaveDataInMemory(data);
+		}
 
 		INFO("Process DONE.");
 	}
