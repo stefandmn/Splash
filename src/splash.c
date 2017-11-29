@@ -146,6 +146,7 @@ CmdData GetInputData(int argc, char argv[])
 		{"reset", no_argument, NULL, 'r'},
 		{"keep", no_argument, NULL, 'k'},
 		{"wipe", no_argument, NULL, 'w'},
+		{"console", no_argument, NULL, 'c'},
 		{"exit", optional_argument, NULL, 'e'},
 		{"quit", optional_argument, NULL, 'q'},
 		{"shape", optional_argument, NULL, 's'},
@@ -164,7 +165,7 @@ CmdData GetInputData(int argc, char argv[])
 	strcpy(data.value, "");
 	strcpy(data.props, "");
 
-	while((opt = getopt_long(argc, argv, "rkwe::q::x::y::i:m:p:s:", options, NULL)) != -1)
+	while((opt = getopt_long(argc, argv, "rkwec::q::x::y::i:m:p:s:", options, NULL)) != -1)
 	{
 		if (optarg != NULL)
 		{
@@ -195,6 +196,11 @@ CmdData GetInputData(int argc, char argv[])
 			case 'w':
 				if(strlen(data.props) > 0) strcat(data.props, ", ");
 				strcat(data.props, "wipe=true");
+				break;
+
+			case 'c':
+				if(strlen(data.props) > 0) strcat(data.props, ", ");
+				strcat(data.props, "console=true");
 				break;
 				
 			case 'x':
@@ -307,16 +313,27 @@ int main(int argc, char **argv)
 	// Main Workflow
 	if(!HasDataInMemory())
 	{
-		INFO("New process CREATEs console");
+		if(getBoolDataProperty(data, "console"))
+		{
+			INFO("New process CREATEs console");
 
-		//open graphical console
-		OpenGraphicsOnConsole(&console);
-
+			//open graphical console
+			OpenGraphicsOnConsole(&console);			
+		}
+		else
+		{
+			INFO("New process KEEPs console ");
+		}
+			
 		//initialize the screen
 		OpenBuffer();
 
-		//set black screen
-		ResetScreen();
+		//reset the screen
+		if(getBoolDataProperty(data, "reset") || getBoolDataProperty(data, "console"))
+		{
+			//set black screen
+			ResetScreen();
+		}
 	}
 	else
 	{
