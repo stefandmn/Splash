@@ -165,7 +165,7 @@ CmdData GetInputData(int argc, char argv[])
 	strcpy(data.value, "");
 	strcpy(data.props, "");
 
-	while((opt = getopt_long(argc, argv, "rkwec::q::x::y::i:m:p:s:", options, NULL)) != -1)
+	while((opt = getopt_long(argc, argv, "rkwen::q::x::y::i:m:p:s:", options, NULL)) != -1)
 	{
 		if (optarg != NULL)
 		{
@@ -192,7 +192,7 @@ CmdData GetInputData(int argc, char argv[])
 				if(strlen(data.props) > 0) strcat(data.props, ", ");
 				strcat(data.props, "keep=true");
 				break;
-				
+
 			case 'w':
 				if(strlen(data.props) > 0) strcat(data.props, ", ");
 				strcat(data.props, "wipe=true");
@@ -202,7 +202,7 @@ CmdData GetInputData(int argc, char argv[])
 				if(strlen(data.props) > 0) strcat(data.props, ", ");
 				strcat(data.props, "console=true");
 				break;
-				
+
 			case 'x':
 				if(strcmp(value, "") > 0) data.xpoint = atoi(value);
 					else data.xpoint = 0;

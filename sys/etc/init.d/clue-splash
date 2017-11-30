@@ -48,7 +48,7 @@ case "$1" in
 		;;
     stop)
     	if [ "$splash" = "y" ]; then
-			$DAEMON --image=splash -k -r
+			$DAEMON --image=splash --console
 			$DAEMON --message="stopping services.." --ypoint=-34
 			sleep 1
 		fi

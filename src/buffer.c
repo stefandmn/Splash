@@ -123,12 +123,20 @@ void SetPosition(int *x, int *y, int width, int height)
 	
 	if(*x <= 0)
 	{
-		if(*x >=-2 || *x <= -100) ratio = 2;
+		if(*x >=-2 || *x <= -100000) ratio = 2;
 		else if(*x >= -10 && *x < -2) ratio = abs(*x);
-		else if(*x > -100 && *x < 10)
+		else if(*x > -1000 && *x < -10)
 		{
 			ratio = (int) abs(*x) % 10;
 			parts = (int) abs(*x) / 10;
+		}
+		else if(*x > -100000 && *x < -1000)
+		{
+			ratio = (int) abs(*x) % 10;
+			parts = (int) abs(*x) / 10;
+			
+			ratio = ratio + 10*((int) parts % 10);
+			parts = (int) parts / 10;
 		}
 			
 		if(width < fbs.vinfo.xres)
@@ -139,12 +147,20 @@ void SetPosition(int *x, int *y, int width, int height)
 
 	if(*y <= 0)
 	{
-		if(*y >=-2 || *y <= -100) ratio = 2;
+		if(*y >=-2 || *y <= -100000) ratio = 2;
 		else if(*y >= -10 && *y < -2) ratio = abs(*y);
-		else if(*y > -100 && *y < 10)
+		else if(*y > -1000 && *y < -10)
 		{
 			ratio = (int) abs(*y) % 10;
 			parts = (int) abs(*y) / 10;
+		}
+		else if(*y > -100000 && *y < -1000)
+		{
+			ratio = (int) abs(*y) % 10;
+			parts = (int) abs(*y) / 10;
+			
+			ratio = ratio + 10*((int) parts % 10);
+			parts = (int) parts / 10;
 		}
 
 		if(height < fbs.vinfo.yres)
