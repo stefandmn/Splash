@@ -146,6 +146,7 @@ CmdData GetInputData(int argc, char argv[])
 		{"reset", no_argument, NULL, 'r'},
 		{"keep", no_argument, NULL, 'k'},
 		{"wipe", no_argument, NULL, 'w'},
+		{"head", no_argument, NULL, 'h'},
 		{"console", no_argument, NULL, 'c'},
 		{"exit", optional_argument, NULL, 'e'},
 		{"quit", optional_argument, NULL, 'q'},
@@ -165,7 +166,7 @@ CmdData GetInputData(int argc, char argv[])
 	strcpy(data.value, "");
 	strcpy(data.props, "");
 
-	while((opt = getopt_long(argc, argv, "rkwen::q::x::y::i:m:p:s:", options, NULL)) != -1)
+	while((opt = getopt_long(argc, argv, "rkwhen::q::x::y::i:m:p:s:", options, NULL)) != -1)
 	{
 		if (optarg != NULL)
 		{
@@ -196,6 +197,11 @@ CmdData GetInputData(int argc, char argv[])
 			case 'w':
 				if(strlen(data.props) > 0) strcat(data.props, ", ");
 				strcat(data.props, "wipe=true");
+				break;
+
+			case 'h':
+				if(strlen(data.props) > 0) strcat(data.props, ", ");
+				strcat(data.props, "head=true");
 				break;
 
 			case 'c':
@@ -354,7 +360,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			if(!getBoolDataProperty(data, "wipe"))
+			if(!getBoolDataProperty(data, "wipe") && !getBoolDataProperty(data, "head"))
 			{
 				//read old data from memory and parse it
 				DEBUG("Reading memory buffer");
@@ -454,7 +460,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		if(!getBoolDataProperty(data, "wipe") && !(strcmp(data.value, "progressbar") == 0 && getIntDataProperty(data, "percent") < 0))
+		if(!getBoolDataProperty(data, "wipe") && !getBoolDataProperty(data, "head") && !(strcmp(data.value, "progressbar") == 0 && getIntDataProperty(data, "percent") < 0))
 		{
 			// write the current transaction in memory
 			DEBUG("Writing memory buffer");

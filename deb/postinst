@@ -1,18 +1,8 @@
 #!/bin/bash
 
 if [ "$1" == "configure" ]; then
-	# Set scripts permissions and Register service
-	chmod +x /etc/init.d/clue-splash
-	/usr/sbin/update-rc.d clue-splash start 99 . stop 01 >/dev/null 2>&1
-	/bin/systemctl daemon-reload
-
 	# Register InitRamFS
 	chmod +x /etc/initramfs-tools/hooks/splash
 	chmod +x /etc/initramfs-tools/scripts/init-top/splash
 	update-initramfs -u >/dev/null 2>&1
-
-	# Restart the service (if is the case)
-	if [ $(ps -ef | grep "splash" | grep -v "grep" | grep -v "apt" | wc -l) -ne 0 ]; then
-		service clue-splash restart
-	fi
 fi
