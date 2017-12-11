@@ -17,6 +17,7 @@ DAEMON="/opt/clue/bin/splash"
 
 ############### END EDIT ME ##################
 
+config=n
 splash=n
 test -x $DAEMON || exit 0
 RUNLEVEL=$(/sbin/runlevel | cut -d " " -f 2)
@@ -29,12 +30,15 @@ for x in $(cat /proc/cmdline); do
 		splash)
 			splash=y
 			;;
+		config)
+			config=y
+			;;
 	esac
 done
 
 case "$1" in
     start)
-    	if [ "$splash" = "y" ]; then
+    	if [ "$splash" = "y" ] && [ "$config" != "y" ]; then
     		$DAEMON --message="starting services.." --ypoint=-34 --wipe
 			if [ ! -f /etc/init.d/clue-mcpi ] || [ ! -f /etc/rc${RUNLEVEL}.d/S*clue-mcpi ]; then
 				IPADDR=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
