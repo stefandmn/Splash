@@ -1,5 +1,10 @@
 #!/bin/bash
 
 if [ "$1" == "remove" ]; then
-	true
+	# Remove service
+	if [ $(ps -ef | grep "splash" | grep -v "grep" | grep -v "apt" | grep -v "dpkg" | grep -v "init" | wc -l) -eq 0 ]; then
+		service clue-splash stop >/dev/null 2>&1
+	fi
+	/usr/sbin/update-rc.d -f clue-splash remove >/dev/null 2>&1
+	/bin/systemctl daemon-reload >/dev/null 2>&1
 fi

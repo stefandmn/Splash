@@ -1,0 +1,67 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:             clue-splash
+# Required-Start:       $all
+# Required-Stop:        $all
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    Stop/start splash application according to the system status
+### END INIT INFO
+
+############### EDIT ME ##################
+
+NAME=clue-splash
+DESC="Clue Splash"
+DAEMON="/opt/clue/bin/splash"
+
+############### END EDIT ME ##################
+
+config=n
+splash=n
+test -x $DAEMON || exit 0
+RUNLEVEL=$(/sbin/runlevel | cut -d " " -f 2)
+if [ "${RUNLEVEL}" = "" -o "${RUNLEVEL}" = "unknown" ]; then RUNLEVEL=5 ; fi
+
+. /lib/lsb/init-functions
+
+for x in $(cat /proc/cmdline); do
+	case $x in
+		splash)
+			splash=y
+			;;
+		setup)
+			setup=y
+			;;
+	esac
+done
+
+case "$1" in
+    start)
+    	if [ "$splash" = "y" ] && [ "$setup" != "y" ]; then
+    		$DAEMON --message="starting services.." --ypoint=-34 --wipe
+			if [ ! -f /etc/init.d/clue-mcpi ] || [ ! -f /etc/rc${RUNLEVEL}.d/S*clue-mcpi ]; then
+				IPADDR=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
+				IPADDR=`echo "$IPADDR" | tr "\n" " "`
+				$DAEMON --message="Clue is running: ${IPADDR}" --ypoint=-45 --properties="fontsize=25"
+			else
+				$DAEMON --message="starting MCPi.." --console --ypoint=-34
+				$DAEMON --exit=30
+			fi
+		elif [ "$splash" = "y" ] && [ "$setup" != "y" ]; then
+			echo
+		fi
+		;;
+    stop)
+    	if [ "$splash" = "y" ]; then
+			$DAEMON --image=splash --console
+			$DAEMON --message="stopping services.." --ypoint=-34
+			sleep 1
+		fi
+		;;
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+		;;
+esac
+exit 0
