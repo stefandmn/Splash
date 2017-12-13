@@ -57,6 +57,7 @@ case "$1" in
 		elif [ "$splash" = "y" ] && [ "$setup" = "y" ]; then
 			if [ -f /opt/clue/bin/setup ]; then
 				/opt/clue/bin/setup --init &
+				sleep 3
 			fi
 		fi
 		;;
