@@ -27,7 +27,10 @@ In order to build `clue-splash` package you have to install required packages:
 # Running
 
 1. To display a text message on the screen you have to prepare a command with the following options:
-	TBD
+* `fontfile`
+* `fontsize`
+* `fontcolor`
+* `fontspacing`
 
 ___Examples___
 
