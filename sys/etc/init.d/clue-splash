@@ -47,12 +47,12 @@ case "$1" in
 				IPADDR=`echo "$IPADDR" | tr "\n" " "`
 				$DAEMON --message="Clue is running: ${IPADDR}" --ypoint=-45 --properties="fontsize=25"
 			else
-				$DAEMON --message="starting MCPi.." --console --ypoint=-34
+				$DAEMON --message="starting MCPi.." --ypoint=-34
 				$DAEMON --exit=30
 			fi
 		elif [ "$splash" = "y" ] && [ "$setup" = "y" ]; then
 			if [ -f /opt/clue/bin/setup ]; then
-				/opt/clue/bin/setup --init &
+				/opt/clue/bin/setup --splash=y --init &
 				sleep 3
 			fi
 		fi
