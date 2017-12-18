@@ -52,7 +52,7 @@ case "$1" in
 			fi
 		elif [ "$splash" = "y" ] && [ "$setup" = "y" ]; then
 			if [ -f /opt/clue/bin/setup ]; then
-				/opt/clue/bin/setup --splash=y --init &
+				/opt/clue/bin/setup --splash --init &
 				sleep 3
 			fi
 		fi
