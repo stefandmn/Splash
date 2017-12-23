@@ -50,11 +50,13 @@ case "$1" in
 				$DAEMON --message="starting MCPi.." --ypoint=-34
 				$DAEMON --exit=30
 			fi
-		elif [ "$splash" = "y" ] && [ "$setup" = "y" ]; then
-			if [ -f /opt/clue/bin/setup ]; then
+		elif [ "$setup" = "y" ] && [ -f /opt/clue/bin/setup ]; then
+			if [ "$splash" = "y" ]; then
 				/opt/clue/bin/setup --splash --init &
-				sleep 3
+			else
+				/opt/clue/bin/setup --init &
 			fi
+			sleep 3
 		fi
 		;;
     stop)
