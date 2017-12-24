@@ -48,13 +48,6 @@ CmdData SetShapeProps(CmdData data)
 		}
 		else data = setDataProperty(data, "linecolor", DEFSHP_COLOR);
 		
-		// fillcolor
-		if(hasDataProperty(data, "fillcolor"))
-		{
-			strcpy(tmpval, getDataProperty(data, "fillcolor"));
-			if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "fillcolor", -1);
-		}
-		
 		// width
 		if(hasDataProperty(data, "width"))
 		{
@@ -89,13 +82,6 @@ CmdData SetShapeProps(CmdData data)
 		}
 		else data = setDataProperty(data, "linecolor", DEFSHP_COLOR);
 		
-		// fillcolor
-		if(hasDataProperty(data, "fillcolor"))
-		{
-			strcpy(tmpval, getDataProperty(data, "fillcolor"));
-			if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "fillcolor", -1);
-		}
-		
 		// radius
 		if(hasDataProperty(data, "radius"))
 		{
@@ -129,14 +115,6 @@ CmdData SetShapeProps(CmdData data)
 			if(strcmp(tmpval, "") == 0) data = setDataProperty(data, "barcolor", "#FFFFFF");
 		}
 		else data = setDataProperty(data, "barcolor", "#FFFFFF");
-		
-		// backgroundcolor
-		if(hasDataProperty(data, "backgroundcolor"))
-		{
-			strcpy(tmpval, getDataProperty(data, "backgroundcolor"));
-			if(strcmp(tmpval, "") == 0) data = setIntDataProperty(data, "barcolor", -1);
-		}
-		else data = setIntDataProperty(data, "backgroundcolor", -1);
 		
 		// width
 		if(hasDataProperty(data, "width"))
@@ -253,25 +231,25 @@ void WipeLine(CmdData data)
 		__drawLine(data.xpoint, data.ypoint, 
 			getIntDataProperty(data, "x2point"),
 			getIntDataProperty(data, "y2point"),
-			get16bitColorFromRGB(0, 0, 0));
+			getColorFromRGBA(0, 0, 0, 0));
 	}
 	else if(strcmp(strtrim(data.value), "hline") == 0)
 	{
 		__drawHorizontalLine(data.xpoint, data.ypoint, 
 			getIntDataProperty(data, "x2point"),
-			get16bitColorFromRGB(0, 0, 0));
+			getColorFromRGBA(0, 0, 0, 0));
 	}
 	else if(strcmp(strtrim(data.value), "vline") == 0)
 	{
 		__drawVerticalLine(data.xpoint, data.ypoint, 
 			getIntDataProperty(data, "y2point"),
-			get16bitColorFromRGB(0, 0, 0));
+			getColorFromRGBA(0, 0, 0, 0));
 	}
 }
 
 void DrawRectangle(CmdData data)
 {
-	DEBUG("Drawing Rectangle shape from command: [%s] >> x=%d, y=%d, width=%d, height=%d, linecolor=%d, linewidth=%d, fillcolor=%d", 
+	DEBUG("Drawing Rectangle shape from command: [%s] >> x=%d, y=%d, width=%d, height=%d, linecolor=%x, linewidth=%x, fillcolor=%x", 
 		data.value, data.xpoint, data.ypoint,
 		getIntDataProperty(data, "width"), 
 		getIntDataProperty(data, "height"), 
@@ -294,9 +272,9 @@ void WipeRectangle(CmdData data)
 	__drawRectangle(data.xpoint, data.ypoint,
 		getIntDataProperty(data, "width"), 
 		getIntDataProperty(data, "height"), 
-		get16bitColorFromRGB(0, 0, 0),
+		getColorFromRGBA(0, 0, 0, 0),
 		getIntDataProperty(data, "linewidth"),
-		get16bitColorFromRGB(0, 0, 0));
+		getColorFromRGBA(0, 0, 0, 0));
 }
 
 void DrawCircle(CmdData data)
@@ -321,9 +299,9 @@ void WipeCircle(CmdData data)
 	
 	__drawCircle(data.xpoint, data.ypoint,
 		getIntDataProperty(data, "radius"), 
-		get16bitColorFromRGB(0, 0, 0), 
+		getColorFromRGBA(0, 0, 0, 0), 
 		getIntDataProperty(data, "linewidth"),
-		get16bitColorFromRGB(0, 0, 0));
+		getColorFromRGBA(0, 0, 0, 0));
 }
 
 void DrawProgressBar(CmdData data)
@@ -354,48 +332,23 @@ void WipeProgressBar(CmdData data)
 	__drawRectangle(data.xpoint, data.ypoint,
 		getIntDataProperty(data, "width"), 
 		getIntDataProperty(data, "height"), 
-		get16bitColorFromRGB(0, 0, 0),
+		getColorFromRGBA(0, 0, 0, 0),
 		getIntDataProperty(data, "linewidth"),
-		get16bitColorFromRGB(0, 0, 0));
+		getColorFromRGBA(0, 0, 0, 0));
 }
 
 
-int __drawPixel(int x, int y, unsigned int color)
-{
-	if (fbs.vinfo.bits_per_pixel == 32)
-		__16bitDrawPixel(x, y, color);
-	else
-		__16bitDrawPixel(x, y, color);
-}
-
-int __16bitDrawPixel(int x, int y, unsigned int color)
+int __drawPixel(int x, int y, int32_t rgba)
 {
 	long int location;
 
 	if (x < 0 || y < 0 || x >= fbs.vinfo.xres || y >= fbs.vinfo.yres) return;
 
 	location = (x + fbs.vinfo.xoffset) * (fbs.vinfo.bits_per_pixel / 8) + (y + fbs.vinfo.yoffset) * fbs.finfo.line_length;
-
-	if ((fbs.fbp + location)) 
-		*((unsigned short int*) (fbs.fbp + location)) = color;
+	SetColor(location, rgba);
 }
 
-int __32bitDrawPixel(int x, int y, int32_t color)
-{
-	long int location;
-
-	if (x < 0 || y < 0 || x >= fbs.vinfo.xres || y >= fbs.vinfo.yres) return;
-
-	location = (x + fbs.vinfo.xoffset) * (fbs.vinfo.bits_per_pixel / 8) + (y + fbs.vinfo.yoffset) * fbs.finfo.line_length;
-
-	if ((fbs.fbp + location))
-			*(fbs.fbp + location) = (color) & 0xFF; // blue
-			*(fbs.fbp + location + 1) = (color >> 8) & 0xFF; // green
-			*(fbs.fbp + location + 2) = (color >> 16) & 0xFF; // red
-			*(fbs.fbp + location + 3) = 0x10; // No transparency
-}
-
-void __drawHorizontalLine(int x, int y, int x2, int color)
+void __drawHorizontalLine(int x, int y, int x2, long color)
 {
 	int xx;
 	
@@ -409,7 +362,7 @@ void __drawHorizontalLine(int x, int y, int x2, int color)
 	}
 }
 
-void __drawVerticalLine(int x, int y, int y2, int color)
+void __drawVerticalLine(int x, int y, int y2, int32_t color)
 {
 	int yy;
 	
@@ -423,7 +376,7 @@ void __drawVerticalLine(int x, int y, int y2, int color)
 	}
 }
 
-void __drawLine(int x1, int y1, int x2, int y2, int color)
+void __drawLine(int x1, int y1, int x2, int y2, int32_t color)
 {
 	int i, dx, dy, sdx, sdy, dxabs, dyabs, x, y, px, py;
 
@@ -470,7 +423,7 @@ void __drawLine(int x1, int y1, int x2, int y2, int color)
 	}
 }
 
-void __drawCircle(int xc, int yc, int radius, int linecolor, int linewidth, int fillcolor)
+void __drawCircle(int xc, int yc, int radius, int32_t linecolor, int linewidth, int32_t fillcolor)
 {
 	int width;
 	
@@ -543,7 +496,7 @@ void __drawCircle(int xc, int yc, int radius, int linecolor, int linewidth, int 
 	}
 }
 
-void __drawRectangle(int xc, int yc, int width, int height, int linecolor, int linewidth, int fillcolor)
+void __drawRectangle(int xc, int yc, int width, int height, int32_t linecolor, int linewidth, int32_t fillcolor)
 {
 	int x, y;
 	
@@ -560,22 +513,29 @@ void __drawRectangle(int xc, int yc, int width, int height, int linecolor, int l
 				(x < xc + linewidth) || (x > xc + width - linewidth - 1)) __drawPixel(x, y, linecolor);
 			
 			// Fill rectangle
-			if ((fillcolor >= 0) && (y >= yc + linewidth) && (y <= yc + height - linewidth - 1) &&
+			if ((fillcolor != NULL) && (y >= yc + linewidth) && (y <= yc + height - linewidth - 1) &&
 				(x >= xc + linewidth) && (x <= xc + width - linewidth - 1)) __drawPixel(x, y, fillcolor);
 		}
 	}
 }
 
-int __drawProcessBar(int xc, int yc, int width, int height, int percent, int linecolor, int linewidth, int barcolor, int backgroundcolor)
+int __drawProcessBar(int xc, int yc, int width, int height, int percent, int32_t linecolor, int linewidth, int32_t barcolor, int32_t backgroundcolor)
 {
 	//adapt progressbar position
 	SetPosition(&xc, &yc, width, height);
 	
 	if(percent >= 0)
 	{
-		__drawRectangle(xc, yc, width, height, linecolor, linewidth, -1);
+		__drawRectangle(xc, yc, width, height, linecolor, linewidth, NULL);
 	}
 	
-	__drawRectangle(xc + linewidth, yc + linewidth, ((width - linewidth - linewidth) * abs(percent)) / 100, height - (2 * linewidth), barcolor, 0, barcolor);
-	__drawRectangle(xc + linewidth + ((width * abs(percent)) / 100), yc + linewidth, ((width * (100 - abs(percent))) / 100) - linewidth - linewidth, height - linewidth - linewidth, backgroundcolor, 0, backgroundcolor);
+	if(percent != 0)
+	{
+		__drawRectangle(xc + linewidth, yc + linewidth, ((width - linewidth - linewidth) * abs(percent)) / 100, height - (2 * linewidth), barcolor, 0, barcolor);
+	}
+	
+	if (backgroundcolor != NULL)
+	{
+		__drawRectangle(xc + linewidth + ((width * abs(percent)) / 100), yc + linewidth, ((width * (100 - abs(percent))) / 100) - linewidth - linewidth, height - linewidth - linewidth, backgroundcolor, 0, backgroundcolor);
+	}
 }

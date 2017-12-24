@@ -251,97 +251,6 @@ int CloseConsole(Console* vt)
 	return error;
 }
 
-unsigned long hex2dec(char* hexstr)
-{
-	int i, decval = 0;
-	unsigned long decnum = 0;
-	
-	// Find Hexadecimal Number
-	for (i = 0; i < strlen(hexstr); i++)
-	{
-		if(hexstr[i] >= '0' && hexstr[i] <= '9')
-		{
-			decval = hexstr[i] - 48;
-		}
-		else if(hexstr[i] >= 'a' && hexstr[i] <= 'f')
-		{
-			decval = hexstr[i] - 97 + 10;
-		}
-		else if(hexstr[i] >= 'A' && hexstr[i] <= 'F')
-		{
-			decval = hexstr[i] - 65 + 10;
-		}
-
-		decnum += decval * pow(16, strlen(hexstr) - i-1);
-	}
-
-	return decnum;
-}
-
-/**
- * Create as 16bit color map from a RGB representation.
- *
- * @param r red color
- * @param g green color
- * @param b blue color
- * @return 16bit color map
- */
-unsigned int get16bitColorFromRGB(int r, int g, int b)
-{
-	return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);
-}
-
-/**
- * Convert a 32bit color map into 16bit
- * 
- * @param color 32bit color map
- * @return 16bit color map
- */
-unsigned int get16bitColorFrom32bit(int32_t color)
-{
-	return ((color >> 16) & 0xFF) << 11 | ((color >> 8) & 0xFF) << 5 | (color & 0xFF);
-}
-
-/**
- * Create as 16bit color map from a HEX representation.
- *
- * @param color hex color representation
- * @return 16bit color map
- */
-unsigned int get16bitColorFromHEX(char *color)
-{
-	char *value, *tmp;
-	int r = 0, g = 0, b = 0;
-
-	value = malloc(sizeof(char) * 6);
-	tmp = malloc(sizeof(char) * 3);
-	
-	if(color != NULL && strcmp(color, "") > 0)
-	{
-		if(color[0] == '#') strcpy(value, color + 1);
-			else strcpy(value, color);
-
-		if(sizeof(value) < 6) strncat(value, "000000", 6 - strlen(value));
-
-		strncpy(tmp, value, 2);
-		tmp[2] = '\0';
-		r = hex2dec(tmp);
-
-		strncpy(tmp, value + 2, 2);
-		tmp[2] = '\0';
-		g = hex2dec(tmp);
-
-		strncpy(tmp, value + 4, 2);
-		tmp[2] = '\0';
-		b = hex2dec(tmp);
-	}
-	
-	free(value);
-	free(tmp);
-
-	return get16bitColorFromRGB(r, g, b);
-}
-
 /**
  * Logger implementation to be used for the entire project
  *
@@ -400,6 +309,18 @@ void Logger(char* level, char* filename, int line, char *fmt, ...)
 						fprintf(fp, "%d", e);
 						continue;
 					}
+					case 'x': /* hexadecimal integer */
+					{
+						e = va_arg(list, long);
+						fprintf(fp, "%x", e);
+						continue;
+					}
+					case 'f': /* float */
+					{
+						e = va_arg(list, float);
+						fprintf(fp, "%f", e);
+						continue;
+					}
 					case 'b': /* boolean */
 					{
 						e = va_arg(list, int);
@@ -419,6 +340,105 @@ void Logger(char* level, char* filename, int line, char *fmt, ...)
 		fclose(fp);
 		free(buf);
 	}	
+}
+
+unsigned long hex2dec(char* hexstr)
+{
+	int i, decval = 0;
+	unsigned long decnum = 0;
+	
+	// Find Hexadecimal Number
+	for (i = 0; i < strlen(hexstr); i++)
+	{
+		if(hexstr[i] >= '0' && hexstr[i] <= '9')
+		{
+			decval = hexstr[i] - 48;
+		}
+		else if(hexstr[i] >= 'a' && hexstr[i] <= 'f')
+		{
+			decval = hexstr[i] - 97 + 10;
+		}
+		else if(hexstr[i] >= 'A' && hexstr[i] <= 'F')
+		{
+			decval = hexstr[i] - 65 + 10;
+		}
+
+		decnum += decval * pow(16, strlen(hexstr) - i-1);
+	}
+
+	return decnum;
+}
+
+/**
+ * Create a color map from a HEX representation.
+ *
+ * @param color hex color representation
+ * @return color map
+ */
+int32_t getColorFromHEX(char *color)
+{
+	char *value, *tmp;
+	int r = 0, g = 0, b = 0, a = 0;
+
+	value = malloc(sizeof(char) * 8);
+	tmp = malloc(sizeof(char) * 3);
+	
+	if(color != NULL && strcmp(color, "") > 0)
+	{
+		if(color[0] == '#') strcpy(value, color + 1);
+			else strcpy(value, color);
+
+		if(sizeof(value) < 6) strncat(value, "000000", 6 - strlen(value));
+		if(sizeof(value) < 8) strncat(value, "ff", 8 - strlen(value));
+
+		strncpy(tmp, value, 2);
+		tmp[2] = '\0';
+		r = hex2dec(tmp);
+
+		strncpy(tmp, value + 2, 2);
+		tmp[2] = '\0';
+		g = hex2dec(tmp);
+
+		strncpy(tmp, value + 4, 2);
+		tmp[2] = '\0';
+		b = hex2dec(tmp);
+
+		strncpy(tmp, value + 6, 2);
+		tmp[2] = '\0';
+		a = hex2dec(tmp);
+	}
+	
+	free(value);
+	free(tmp);
+
+	return getColorFromRGBA(r, g, b, a);
+}
+
+/**
+ * Create as color map from a RGB representation.
+ *
+ * @param r red color
+ * @param g green color
+ * @param b blue color
+ * @return color map
+ */
+int32_t getColorFromRGB(int r, int g, int b)
+{
+	return getColorFromRGBA(r, g, b, 255);
+}
+
+/**
+ * Create as color map from a RGBA representation.
+ *
+ * @param r red color
+ * @param g green color
+ * @param b blue color
+ * @param a alpha color
+ * @return color map
+ */
+int32_t getColorFromRGBA(int r, int g, int b, int a)
+{
+	return ((r & 0xff) << 24) + ((g & 0xff) << 16) + ((b & 0xff) << 8) + (a & 0xff);
 }
 
 /**
@@ -833,14 +853,14 @@ bool getBoolDataProperty(CmdData data, char* name)
  * @param color property name
  * @return 16bit color map
  */
-unsigned int getColorDataProperty(CmdData data, char* name)
+int32_t getColorDataProperty(CmdData data, char* name)
 {
-	unsigned int value = -1;
+	int32_t value = NULL;
 	char* txtval = getDataProperty(data, name);
 
-	if(txtval != NULL) 
+	if(txtval != NULL && strcmp(txtval, "") != 0) 
 	{
-		value = get16bitColorFromHEX(txtval);
+		value = getColorFromHEX(txtval);
 		free(txtval);
 	}
 	

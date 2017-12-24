@@ -132,7 +132,7 @@ void OverdrawText(CmdData data)
 	__drawText(data.value, data.xpoint, data.ypoint,
 			getDataProperty(data, "fontfile"),
 			getIntDataProperty(data, "fontsize"),
-			get16bitColorFromRGB(0, 0, 0),
+			getColorFromRGBA(0, 0, 0, 0),
 			getIntDataProperty(data, "fontspacing"),
 			getIntDataProperty(data, "fontdecoration") );
 }
@@ -145,10 +145,10 @@ void OverdrawText(CmdData data)
  * @param yc vertical position
  * @param fontfile font file to be used to draw the letters
  * @param size the size of the font
- * @param color the text color
+ * @param rgba the text color
  * @param spacing spacing between letters
  */
-void __drawText(char *text, int xc, int yc, char *fontfile, int size, unsigned short int color, int spacing)
+void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rgba, int spacing)
 {
 	int i=0, n, y, x, id, rc;
 	int charWidth = 0, charHeight = 0, textWidth = 0;
@@ -254,7 +254,7 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, unsigned s
 							if (x + xc >= 0 && y + yc - (metrics->horiBearingY / 64) >= 0)
 							{
 								long int location = (x + xc + fbs.vinfo.xoffset) * (fbs.vinfo.bits_per_pixel / 8) + (y + yc - (metrics->horiBearingY / 64) + fbs.vinfo.yoffset) * fbs.finfo.line_length;
-								if ((fbs.fbp + location)) * ((unsigned short int*) (fbs.fbp + location)) = color;
+								SetColor(location, rgba);								
 							}
 						}
 					}

@@ -44,4 +44,12 @@ void ResetScreen(void);
  */
 void SetPosition(int *x, int *y, int width, int height);
 
+/**
+ * Apply color RGBA map to a specific buffer address
+ * 
+ * @param location frame buffer address described by a segment location
+ * @param rgba RBG color map
+ */
+void SetColor(long int location, int32_t rgba);
+
 #endif

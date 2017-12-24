@@ -169,3 +169,32 @@ void SetPosition(int *x, int *y, int width, int height)
 			*y = 0;
 	}
 }
+
+/**
+ * Apply color RGBA map to a specific buffer address
+ * 
+ * @param location frame buffer address described by a segment location
+ * @param rgba RBG color map
+ */
+void SetColor(long int location, int32_t rgba)
+{
+	rgba = (((rgba & 0x0000FF00) >> 8) << 24) +
+		   (((rgba & 0x00FF0000) >> 16) << 16) +
+		   (((rgba & 0xFF000000) >> 24) << 8) +
+		   (((rgba & 0x000000FF)));	
+	
+	if (fbs.vinfo.bits_per_pixel >= 32)
+	{
+		*(fbs.fbp + location) = (rgba & 0xFF000000) >> 24;			// red
+		*(fbs.fbp + location + 1) = (rgba & 0x00FF0000) >> 16;		// green
+		*(fbs.fbp + location + 2) = (rgba & 0x0000FF00) >> 8;		// blue
+		*(fbs.fbp + location + 3) = (rgba & 0x000000FF);			// transparency		
+	} 
+	else
+	{
+		int b = (rgba & 0xFF000000) >> 24;							// blue
+		int g = (rgba & 0x00FF0000) >> 16;							// green
+		int r = (rgba & 0x0000FF00) >> 8;							// red
+		*((unsigned short int *)(fbs.fbp + location)) = (unsigned short int) (r >> 3 << 11) | (g >> 2 << 5) | (b >> 3);
+	}	
+}

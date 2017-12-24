@@ -152,30 +152,33 @@ int OpenGraphicsOnConsole(Console* vt);
 int CloseConsole(Console* vt);
 
 /**
- * Create as 16bit color map from a RGB representation.
+ * Create a color map from a HEX representation.
+ *
+ * @param color hex color representation
+ * @return color map
+ */
+int32_t getColorFromHEX(char *color);
+
+/**
+ * Create as color map from a RGB representation.
  *
  * @param r red color
  * @param g green color
  * @param b blue color
- * @return 16bit color map
+ * @return color map
  */
-unsigned int get16bitColorFromRGB(int r, int g, int b);
+int32_t getColorFromRGB(int r, int g, int b);
 
 /**
- * Convert a 32bit color map into 16bit
- * 
- * @param color 32bit color map
- * @return 16bit color map
- */
-unsigned int get16bitColorFrom32bit(int32_t color);
-
-/**
- * Create as 16bit color map from a HEX representation.
+ * Create as color map from a RGB representation.
  *
- * @param colorr hex color representation
- * @return 16bit color map
+ * @param r red color
+ * @param g green color
+ * @param b blue color
+ * @param a alpha color
+ * @return color map
  */
-unsigned int get16bitColorFromHEX(char *color);
+int32_t getColorFromRGBA(int r, int g, int b, int a);
 
 /**
  * Check is a string pointer starts with a specific sub-string (managed as pointer)
@@ -329,6 +332,6 @@ bool getBoolDataProperty(CmdData data, char* name);
  * @param color property name
  * @return 16bit color map
  */
-unsigned int getColorDataProperty(CmdData data, char* name);
+int32_t getColorDataProperty(CmdData data, char* name);
 
 #endif
