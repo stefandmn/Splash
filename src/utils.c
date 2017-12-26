@@ -388,8 +388,7 @@ int32_t getColorFromHEX(char *color)
 		if(color[0] == '#') strcpy(value, color + 1);
 			else strcpy(value, color);
 
-		if(sizeof(value) < 6) strncat(value, "000000", 6 - strlen(value));
-		if(sizeof(value) < 8) strncat(value, "ff", 8 - strlen(value));
+		if(sizeof(value) < 8) strncat(value, "00000000", 8 - strlen(value));
 
 		strncpy(tmp, value, 2);
 		tmp[2] = '\0';
@@ -726,7 +725,7 @@ CmdData setDataProperty(CmdData data, char* name, char* value)
  * @param name property name
  * @param value property integer value
  */
-CmdData setIntDataProperty(CmdData data, char* name, int value)
+CmdData setIntDataProperty(CmdData data, char* name, long value)
 {
 	char number[10];
 

@@ -132,7 +132,7 @@ void OverdrawText(CmdData data)
 	__drawText(data.value, data.xpoint, data.ypoint,
 			getDataProperty(data, "fontfile"),
 			getIntDataProperty(data, "fontsize"),
-			getColorFromRGBA(0, 0, 0, 0),
+			getColorFromRGBA(0, 0, 0, 255),
 			getIntDataProperty(data, "fontspacing"),
 			getIntDataProperty(data, "fontdecoration") );
 }

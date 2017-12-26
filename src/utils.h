@@ -283,7 +283,7 @@ CmdData setDataProperty(CmdData data, char* name, char* value);
  * @param name property name
  * @param value property integer value
  */
-CmdData setIntDataProperty(CmdData data, char* name, int value);
+CmdData setIntDataProperty(CmdData data, char* name, long value);
 
 /**
  * Set the specified property and related boolean value into the input structure

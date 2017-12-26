@@ -231,19 +231,19 @@ void WipeLine(CmdData data)
 		__drawLine(data.xpoint, data.ypoint, 
 			getIntDataProperty(data, "x2point"),
 			getIntDataProperty(data, "y2point"),
-			getColorFromRGBA(0, 0, 0, 0));
+			getColorFromRGBA(0, 0, 0, 255));
 	}
 	else if(strcmp(strtrim(data.value), "hline") == 0)
 	{
 		__drawHorizontalLine(data.xpoint, data.ypoint, 
 			getIntDataProperty(data, "x2point"),
-			getColorFromRGBA(0, 0, 0, 0));
+			getColorFromRGBA(0, 0, 0, 255));
 	}
 	else if(strcmp(strtrim(data.value), "vline") == 0)
 	{
 		__drawVerticalLine(data.xpoint, data.ypoint, 
 			getIntDataProperty(data, "y2point"),
-			getColorFromRGBA(0, 0, 0, 0));
+			getColorFromRGBA(0, 0, 0, 255));
 	}
 }
 
@@ -272,9 +272,9 @@ void WipeRectangle(CmdData data)
 	__drawRectangle(data.xpoint, data.ypoint,
 		getIntDataProperty(data, "width"), 
 		getIntDataProperty(data, "height"), 
-		getColorFromRGBA(0, 0, 0, 0),
+		getColorFromRGBA(0, 0, 0, 255),
 		getIntDataProperty(data, "linewidth"),
-		getColorFromRGBA(0, 0, 0, 0));
+		getColorFromRGBA(0, 0, 0, 255));
 }
 
 void DrawCircle(CmdData data)
@@ -299,9 +299,9 @@ void WipeCircle(CmdData data)
 	
 	__drawCircle(data.xpoint, data.ypoint,
 		getIntDataProperty(data, "radius"), 
-		getColorFromRGBA(0, 0, 0, 0), 
+		getColorFromRGBA(0, 0, 0, 255), 
 		getIntDataProperty(data, "linewidth"),
-		getColorFromRGBA(0, 0, 0, 0));
+		getColorFromRGBA(0, 0, 0, 255));
 }
 
 void DrawProgressBar(CmdData data)
@@ -332,9 +332,9 @@ void WipeProgressBar(CmdData data)
 	__drawRectangle(data.xpoint, data.ypoint,
 		getIntDataProperty(data, "width"), 
 		getIntDataProperty(data, "height"), 
-		getColorFromRGBA(0, 0, 0, 0),
+		getColorFromRGBA(0, 0, 0, 255),
 		getIntDataProperty(data, "linewidth"),
-		getColorFromRGBA(0, 0, 0, 0));
+		getColorFromRGBA(0, 0, 0, 255));
 }
 
 
@@ -534,5 +534,8 @@ int __drawProcessBar(int xc, int yc, int width, int height, int percent, int32_t
 		__drawRectangle(xc + linewidth, yc + linewidth, ((width - linewidth - linewidth) * abs(percent)) / 100, height - (2 * linewidth), barcolor, 0, barcolor);
 	}
 
-	__drawRectangle(xc + linewidth + ((width * abs(percent)) / 100), yc + linewidth, ((width * (100 - abs(percent))) / 100) - linewidth - linewidth, height - linewidth - linewidth, backgroundcolor, 0, backgroundcolor);
+	if (backgroundcolor != NULL && percent >= 0)
+	{
+		__drawRectangle(xc + linewidth + ((width * abs(percent)) / 100), yc + linewidth, ((width * (100 - abs(percent))) / 100) - linewidth - linewidth, height - linewidth - linewidth, backgroundcolor, 0, backgroundcolor);
+	}
 }
