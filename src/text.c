@@ -198,7 +198,7 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rg
 		FT_Vector pen;
 		FT_Error error;
 		FT_Glyph_Metrics *metrics;
-		int tsize = text[strlen(text) - 1] == '\0' ? strlen(text) - 1 : strlen(text);
+		int tsize = strlen(text);
 
 		FT_Init_FreeType(&library);
 		FT_New_Memory_Face(library, fontdata, fontsize, 0, &face);
@@ -206,7 +206,7 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rg
 		FT_Set_Pixel_Sizes(face, 0, size);
 		FT_UInt glyph_index;
 	
-		for (n = 0; n < strlen(text); n++)
+		for (n = 0; n < tsize; n++)
 		{
 			glyph_index = FT_Get_Char_Index(face, text[n]);
 			FT_Load_Glyph(face, glyph_index, 0);
@@ -223,16 +223,29 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rg
 				charWidth = face->glyph->bitmap.width;
 			}
 			
-			textWidth += face->glyph->bitmap.width + spacing;
+			if (text[n] == ' ')
+			{
+				textWidth += charWidth;
+			}
+			else textWidth += face->glyph->bitmap.width + spacing;
+		}
+		
+		//detect text size for potential trim and adjust text width
+		if(xc + textWidth > fbs.vinfo.xres)
+		{
+			tsize = tsize*(fbs.vinfo.xres-xc)/textWidth;
+			text[tsize-2] = '.';
+			text[tsize-1] = '.';
+			textWidth = fbs.vinfo.xres-xc;
 		}
 		
 		//adapt text position
-		SetPosition(&xc, &yc, textWidth, size);
+		SetPosition(&xc, &yc, textWidth, charHeight);		
 		
-		DEBUG("Preparing Message buffer at %dx%d, with dimension %dx%d", xc, yc, textWidth, size);
+		DEBUG("Preparing Message buffer at %dx%d, with dimension %dx%d", xc, yc, charWidth, charHeight);
 		yc += charHeight;
 
-		for (n = 0; n < strlen(text); n++)
+		for (n = 0; n < tsize; n++)
 		{
 			if (text[n] == ' ')
 			{
