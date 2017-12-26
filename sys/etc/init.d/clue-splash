@@ -22,7 +22,7 @@ splash=n
 
 test -x $DAEMON || exit 0
 
-RUNLEVEL=$(/sbin/runlevel | cut -d " " -f 2)
+RUNLEVEL=
 if [ "${RUNLEVEL}" = "" -o "${RUNLEVEL}" = "unknown" ]; then RUNLEVEL=5 ; fi
 
 . /lib/lsb/init-functions
@@ -40,23 +40,21 @@ done
 
 case "$1" in
     start)
-    	if [ "$splash" = "y" ] && [ "$setup" != "y" ]; then
-    		$DAEMON --message="starting services.." --ypoint=-34 --wipe
-			if [ ! -f /etc/init.d/clue-mcpi ] || [ ! -f /etc/rc${RUNLEVEL}.d/S*clue-mcpi ]; then
-				IPADDR=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
-				IPADDR=`echo "$IPADDR" | tr "\n" " "`
-				$DAEMON --message="Clue is running: ${IPADDR}" --ypoint=-45 --properties="fontsize=25"
-			else
-				$DAEMON --message="starting MCPi.." --ypoint=-34
-				$DAEMON --exit=30
-			fi
-		elif [ "$setup" = "y" ] && [ -f /opt/clue/bin/setup ]; then
+    	if [ "$setup" = "y" ] && [ -f /opt/clue/bin/setup ]; then
 			if [ "$splash" = "y" ]; then
 				/opt/clue/bin/setup --splash --init &
 			else
 				/opt/clue/bin/setup --init &
 			fi
 			sleep 3
+		elif [ "$setup" != "y" ] && [ -f /opt/clue/bin/setup ]; then
+    		if [ "$splash" = "y" ]; then
+    			$DAEMON --message="starting services.." --ypoint=-34 --wipe
+				if [ -f /etc/init.d/clue-mcpi ] && [ "$(/opt/clue/bin/setup -g service -b mcpi)" = "+" ] && [ "$(/sbin/runlevel | cut -d " " -f 2)" = "" ]; then
+					$DAEMON --message="starting MCPi.." --ypoint=-34
+					$DAEMON --exit=30
+				fi
+			fi
 		fi
 		;;
     stop)
