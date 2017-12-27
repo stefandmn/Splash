@@ -229,7 +229,10 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rg
 			}
 			else textWidth += face->glyph->bitmap.width + spacing;
 		}
-		
+
+		//adapt text position
+		SetPosition(&xc, &yc, textWidth, charHeight);
+
 		//detect text size for potential trim and adjust text width
 		if(xc + textWidth > fbs.vinfo.xres)
 		{
@@ -238,9 +241,6 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rg
 			text[tsize-1] = '.';
 			textWidth = fbs.vinfo.xres-xc;
 		}
-		
-		//adapt text position
-		SetPosition(&xc, &yc, textWidth, charHeight);		
 		
 		DEBUG("Preparing Message buffer at %dx%d, with dimension %dx%d", xc, yc, charWidth, charHeight);
 		yc += charHeight;

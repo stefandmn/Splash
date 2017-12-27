@@ -42,9 +42,9 @@ case "$1" in
     start)
     	if [ "$setup" = "y" ] && [ -f /opt/clue/bin/setup ]; then
 			if [ "$splash" = "y" ]; then
-				/opt/clue/bin/setup --splash --init &
+				$DAEMON --splash --init &
 			else
-				/opt/clue/bin/setup --init &
+				$DAEMON --init &
 			fi
 			sleep 3
 		elif [ "$setup" != "y" ] && [ -f /opt/clue/bin/setup ]; then
