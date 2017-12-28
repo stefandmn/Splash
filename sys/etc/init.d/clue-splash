@@ -51,7 +51,6 @@ case "$1" in
 			sleep 3
 		else
     		if [ "$splash" = "y" ]; then
-    			$DAEMON --image=splash --console --reset
 				if [ -f /etc/init.d/clue-mcpi ] && [ -f /etc/rc3.d/S*clue-mcpi -o -f /etc/rc5.d/S*clue-mcpi ] && [ "$(/sbin/runlevel | cut -d " " -f 2)" = "unknown" -o "$(/sbin/runlevel | cut -d " " -f 2)" = "" ]; then
 					$DAEMON --message="starting MCPi.." --ypoint=-34
 					$DAEMON --exit=30
