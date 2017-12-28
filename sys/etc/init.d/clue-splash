@@ -14,7 +14,7 @@
 NAME=clue-splash
 DESC="Clue Splash"
 SPLASH="/opt/clue/bin/splash"
-SETUP="/opt/clue/bin/splash"
+SETUP="/opt/clue/bin/setup"
 
 ############### END EDIT ME ##################
 
