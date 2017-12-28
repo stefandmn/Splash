@@ -117,9 +117,10 @@ void ResetScreen(void)
 	}	
 }
 
-void SetPosition(int *x, int *y, int width, int height)
+void SetCoordinates(int *x, int *y, int width, int height)
 {
 	int ratio = 1, parts = 1;
+	bool update=false;
 	
 	if(*x <= 0)
 	{
@@ -143,6 +144,8 @@ void SetPosition(int *x, int *y, int width, int height)
 			*x = parts * (fbs.vinfo.xres - width) / ratio;
 		else
 			*x = 0;
+
+		update = true;
 	}
 
 	if(*y <= 0)
@@ -167,7 +170,11 @@ void SetPosition(int *x, int *y, int width, int height)
 			*y = parts * (fbs.vinfo.yres - height) / ratio;
 		else
 			*y = 0;
+
+		update = true;
 	}
+
+	if (update) DEBUG("Translate object coordinates: %dx%d");
 }
 
 /**

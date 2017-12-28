@@ -354,7 +354,7 @@ void __drawHorizontalLine(int x, int y, int x2, long color)
 	
 	//adapt line position and dimension
 	if(x2 < 0) x2 = fbs.vinfo.xres + x2;
-	SetPosition(&x, &y, x2-x, 1);
+	SetCoordinates(&x, &y, x2-x, 1);
 		
 	for (xx = x; xx < x2; xx++)
 	{
@@ -368,7 +368,7 @@ void __drawVerticalLine(int x, int y, int y2, int32_t color)
 	
 	//adapt line position and dimension
 	if(y2 < 0) y2 = fbs.vinfo.xres + y2;
-	SetPosition(&x, &y, 1, y2-y);
+	SetCoordinates(&x, &y, 1, y2-y);
 	
 	for (yy = y; yy < y2; yy++)
 	{
@@ -428,7 +428,7 @@ void __drawCircle(int xc, int yc, int radius, int32_t linecolor, int linewidth, 
 	int width;
 	
 	//adapt circle position
-	SetPosition(&xc, &xc, radius, radius);
+	SetCoordinates(&xc, &xc, radius, radius);
 	
 	for (width = 0; width < linewidth; width++)
 	{
@@ -501,7 +501,7 @@ void __drawRectangle(int xc, int yc, int width, int height, int32_t linecolor, i
 	int x, y;
 	
 	//adapt rectangle position
-	SetPosition(&xc, &yc, width, height);
+	SetCoordinates(&xc, &yc, width, height);
 	
 	// Figure out where in memory to put the pixel
 	for (y = yc; y < yc + height; y++)
@@ -522,7 +522,7 @@ void __drawRectangle(int xc, int yc, int width, int height, int32_t linecolor, i
 int __drawProcessBar(int xc, int yc, int width, int height, int percent, int32_t linecolor, int linewidth, int32_t barcolor, int32_t backgroundcolor)
 {
 	//adapt progressbar position
-	SetPosition(&xc, &yc, width, height);
+	SetCoordinates(&xc, &yc, width, height);
 	
 	if(percent >= 0)
 	{

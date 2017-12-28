@@ -209,21 +209,8 @@ void __drawImage(char *imgfile, int x_offs, int y_offs, int rotate, bool stretch
 		doEnlarge(&imginfo, screen_width, screen_height, 0);
 	}
 
-	if(x_offs == 0)
-	{
-		if(imginfo.width < screen_width)
-			x_offs = (screen_width - imginfo.width) / 2;
-		else
-			x_offs = 0;
-	}
-
-	if(y_offs == 0)
-	{
-		if(imginfo.height < screen_height)
-			y_offs = (screen_height - imginfo.height) / 2;
-		else
-			y_offs = 0;
-	}
+	//adapt picture position
+	SetCoordinates(&x_offs, &y_offs, imginfo.width, imginfo.height);
 
 	/* correct panning */
 	if(x_pan > imginfo.width - x_stride) x_pan = 0;

@@ -35,14 +35,14 @@ void CloseBuffer(void);
 void ResetScreen(void);
 
 /**
- * Adapt object position
+ * Adapt object coordinates
  * 
  * @param x Input horizontal position
  * @param y Input vertical position
  * @param width Width of graphical object
  * @param height Height of graphical object
  */
-void SetPosition(int *x, int *y, int width, int height);
+void SetCoordinates(int *x, int *y, int width, int height);
 
 /**
  * Apply color RGBA map to a specific buffer address

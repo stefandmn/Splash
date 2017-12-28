@@ -231,7 +231,7 @@ void __drawText(char *text, int xc, int yc, char *fontfile, int size, int32_t rg
 		}
 
 		//adapt text position
-		SetPosition(&xc, &yc, textWidth, charHeight);
+		SetCoordinates(&xc, &yc, textWidth, charHeight);
 
 		//detect text size for potential trim and adjust text width
 		if(xc + textWidth > fbs.vinfo.xres)
