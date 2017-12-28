@@ -24,9 +24,6 @@ splash=n
 test -x $DAEMON || exit 0
 test -x $SETUP || exit 0
 
-RUNLEVEL=
-if [ "${RUNLEVEL}" = "" -o "${RUNLEVEL}" = "unknown" ]; then RUNLEVEL=5 ; fi
-
 . /lib/lsb/init-functions
 
 for x in $(cat /proc/cmdline); do
@@ -51,7 +48,7 @@ case "$1" in
 			sleep 3
 		else
     		if [ "$splash" = "y" ]; then
-				if [ -f /etc/init.d/clue-mcpi ] && [ -f /etc/rc3.d/S*clue-mcpi -o -f /etc/rc5.d/S*clue-mcpi ] && [ "$(/sbin/runlevel | cut -d " " -f 2)" = "unknown" -o "$(/sbin/runlevel | cut -d " " -f 2)" = "" ]; then
+				if [ -f /etc/init.d/clue-mcpi ] && [ -f /etc/rc5.d/S*clue-mcpi ] && [ "$(/sbin/runlevel | cut -d' ' -f2)" != "5" ]; then
 					$DAEMON --message="starting MCPi.." --ypoint=-34
 					$DAEMON --exit=30
 				else
