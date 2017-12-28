@@ -42,16 +42,16 @@ done
 
 case "$1" in
     start)
-    	if [ "$setup" = "y" ] && [ -f /opt/clue/bin/setup ]; then
+    	if [ "$setup" = "y" ]; then
 			if [ "$splash" = "y" ]; then
 				$SETUP --splash --init &
 			else
 				$SETUP --init &
 			fi
 			sleep 3
-		elif [ "$setup" != "y" ] && [ -f /opt/clue/bin/setup ]; then
+		else
     		if [ "$splash" = "y" ]; then
-    			$SPLASH --message="starting services.." --ypoint=-34 --wipe
+    			$SPLASH --image=splash --console --reset
 				if [ -f /etc/init.d/clue-mcpi ] && [ -f /etc/rc3.d/S*clue-mcpi -o -f /etc/rc5.d/S*clue-mcpi ] && [ "$(/sbin/runlevel | cut -d " " -f 2)" = "unknown" -o "$(/sbin/runlevel | cut -d " " -f 2)" = "" ]; then
 					$SPLASH --message="starting MCPi.." --ypoint=-34
 					$SPLASH --exit=30
