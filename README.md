@@ -26,11 +26,15 @@ In order to build `clue-splash` package you have to install required packages:
 
 # Running
 
-1. To display a text message on the screen you have to prepare a command with the following options:
-* `fontfile`
-* `fontsize`
-* `fontcolor`
-* `fontspacing`
+1. To display **text messages** on the screen you have to prepare a command with the following options:
+* `fontfile` - refers a TTF file which should be the font name to display the required text message.
+				In case the font file is already deployed in `share` location of **Splash** module
+				(`/opt/clue/share/splash/fonts`) you can refer only the file name (not thw whole path).
+				By default three font files are includes: `bold.ttf`, `regular.ttf` and `teletext.ttf`
+* `fontsize` - indicates the height of the text letters
+* `fontcolor` - sets the font color for the specified message. The application accept only HEX color
+				format (with or without `hash` sign)
+* `fontspacing` - sets the space between letters (by default the value is 3 horizontal pixels)
 
 ___Examples___
 
@@ -38,11 +42,20 @@ ___Examples___
 
 __or__
 
-`/opt/clue/bin/splash --message="Sample message" -x100 -y200`
+`/opt/clue/bin/splash --message="Sample message" -x100 -y200` -properties="fontcolor=#ff0000,fontsize=30,fontfile=teletext"`
+
+__or__
+
+`/opt/clue/bin/splash --message="Sample message" -x100 -y200` -properties="fontcolor=ff00ff,fontfile=/root/resources/arial.ttf"`
 
 
-2. To display a picture on the screen you have to build a command with the following options:
-	TBD
+2. To display **pictures** on the screen you have to build a command with the options described below. The `--image` switch
+can refer a file name already deployed on the application resources location (`/opt/clue/share/splash/images`) or a specific
+file location. In case the file extension is not specified the PNG format is considered by default.
+* `rotate` - rotate specified image with 90, 180 or 270 degrees - corresponding to input values: 1, 2, 3
+* `enlarge` - displays the image to the whole area of the screen. It is a boolean value, accepts values, likes, `y`, `yes`, `true`
+* `stretch` - displays the image to the whole area of the screen by in stretching mode. It is also a boolean value, he possible value
+			are described above.
 
 ___Examples___
 
@@ -54,8 +67,12 @@ __or__
 
 __or__
 
-`/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg"`
+`/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg" --properties="rotate=1"`
 
 
 3. To display a graphical shape on the screen you have to run a command with the following options:
 	TBD
+
+# Relative coordinates
+
+# DIsplay options
