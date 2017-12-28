@@ -13,14 +13,16 @@
 
 NAME=clue-splash
 DESC="Clue Splash"
-DAEMON="/opt/clue/bin/splash"
+SPLASH="/opt/clue/bin/splash"
+SETUP="/opt/clue/bin/splash"
 
 ############### END EDIT ME ##################
 
 setup=n
 splash=n
 
-test -x $DAEMON || exit 0
+test -x $SPLASH || exit 0
+test -x $SETUP || exit 0
 
 RUNLEVEL=
 if [ "${RUNLEVEL}" = "" -o "${RUNLEVEL}" = "unknown" ]; then RUNLEVEL=5 ; fi
@@ -42,25 +44,25 @@ case "$1" in
     start)
     	if [ "$setup" = "y" ] && [ -f /opt/clue/bin/setup ]; then
 			if [ "$splash" = "y" ]; then
-				$DAEMON --splash --init &
+				$SETUP --splash --init &
 			else
-				$DAEMON --init &
+				$SETUP --init &
 			fi
 			sleep 3
 		elif [ "$setup" != "y" ] && [ -f /opt/clue/bin/setup ]; then
     		if [ "$splash" = "y" ]; then
-    			$DAEMON --message="starting services.." --ypoint=-34 --wipe
+    			$SPLASH --message="starting services.." --ypoint=-34 --wipe
 				if [ -f /etc/init.d/clue-mcpi ] && [ -f /etc/rc3.d/S*clue-mcpi -o -f /etc/rc5.d/S*clue-mcpi ] && [ "$(/sbin/runlevel | cut -d " " -f 2)" = "unknown" -o "$(/sbin/runlevel | cut -d " " -f 2)" = "" ]; then
-					$DAEMON --message="starting MCPi.." --ypoint=-34
-					$DAEMON --exit=30
+					$SPLASH --message="starting MCPi.." --ypoint=-34
+					$SPLASH --exit=30
 				fi
 			fi
 		fi
 		;;
     stop)
     	if [ "$splash" = "y" ]; then
-			$DAEMON --image=splash --console --reset
-			$DAEMON --message="stopping services.." --ypoint=-34
+			$SPLASH --image=splash --console --reset
+			$SPLASH --message="stopping services.." --ypoint=-34
 			sleep 1
 		fi
 		;;
