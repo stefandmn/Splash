@@ -159,7 +159,9 @@ __or__
 
 `splash --shape=progressbar --ypoint=-34 --properties="width=500,height=50,linewidth=4,percent=-30"`
 
-> **Note**: Negative value of `percept` option indicate that the progressbar control will not be redrawn, only `barcolor` area will be adjusted according to the absolute value of the `percent` option. The negative value of `xpoint` option is fully described in ___Relative coordinates___ chapter.
+> **Note**: Negative value of `percept` option indicate that the progressbar control will not be redrawn, only `barcolor` area will be
+adjusted according to the absolute value of the `percent` option. The negative value of `xpoint` option is fully described in
+ ___Relative coordinates___ chapter.
 
 # Display options
 
