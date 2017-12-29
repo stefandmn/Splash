@@ -22,7 +22,7 @@ For the syntax details of each option please see **Running** chapter.
 # Prerequisites
 In order to build `clue-splash` package you have to install required packages:
 
-  apt-get install -y gcc uthash-dev libjpeg62-dev libfreetype6-dev libpng12-dev
+`apt-get install -y gcc uthash-dev libjpeg62-dev libfreetype6-dev libpng12-dev`
 
 # Running
 
@@ -48,6 +48,8 @@ __or__
 
 `/opt/clue/bin/splash --message="Sample message" -x100 -y200` -properties="fontcolor=ff00ff,fontfile=/root/resources/arial.ttf"`
 
+> **Note**: The coordinates options like `-x | --xpoint` or `-y | --ypoint` are described in chapter __Display options___
+
 
 2. To display **pictures** on the screen you have to build a command with the options described below. The `--image` switch
 can refer a file name already deployed on the application resources location (`/opt/clue/share/splash/images`) or a specific
@@ -63,16 +65,27 @@ ___Examples___
 
 __or__
 
-`/opt/clue/bin/splash --image=/opt/clue/share/splash/images/splash.jpg"`
+`/opt/clue/bin/splash --image=/opt/clue/share/splash/images/splash.jpg" -x100 -y100`
 
 __or__
 
-`/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg" --properties="rotate=1"`
+`/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg" --xpoint=100 -ypoint= --properties="rotate=1"`
 
 
-3. To display a graphical shape on the screen you have to run a command with the following options:
-	TBD
+3. To display **graphical shapes** on the screen you have to prepare a command to specify what shape is needed and
+additional options (dedicated per type of shape) for specific formatting: The following shape types are implemented
+* `line` - draw a simple line from point (x,y) to point (x2,y2)
+* `hline` - draw a horizontal line (having the same `X` for both points - not needed to be specified for the second point)
+* `vline` - draw a vertical line (having the same `Y` for both points - not needed to be specified for the second point)
+* `circle` - draw a circle giving the center coordinates - single (x,y) point, and the radius
+* `rectangle` - draw a rectangle providing a initial position and `width` and `height` dimensions.
+* `progressbar` - draw a progress bar control as a derived shape from rectangle.
+
+* `linecolor` -
+* `x2point` -
+* `y2point` -
+* `linecolor` -
 
 # Relative coordinates
 
-# DIsplay options
+# Display options
