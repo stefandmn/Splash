@@ -198,14 +198,21 @@ simple display the object on the screen.
 ___Examples___
 The commands below are use-cases from **Setup** utility.
 
-`/splash --message="Clue OS" --xpoint=-2021 -y5 --head` - displays "Clue OS" text message on the top-right corner of the
+`/splash --message="Clue OS" --xpoint=-2021 -y5 --head`
+> Displays "Clue OS" text message on the top-right corner of the
 screen (relative coordinates). This message will not be removed by the next command and will not be stored in memory.
 
-`splash --message="System Setup" -x5 -y5 --keep` - displays "System Setup" message in the top-left corner of the screen and
+`splash --message="System Setup" -x5 -y5 --keep`
+> Displays "System Setup" message in the top-left corner of the screen and
 keeps it on the screen and in the system memory even if the next command is for the text message display.
 
-`splash --message="System Setup" -x5 -y5 --wipe` - deletes "System Setup" text message located at point (5,5) - if it was
+`splash --message="System Setup" -x5 -y5 --wipe`
+> Deletes "System Setup" text message located at point (5,5) - if it was
 written there before using or not using display options (meaning using `--head` or `--keep` options).
+
+`/opt/clue/bin/splash --image=splash --console --reset`
+> Displays splash.png image (located in resources repository of the application) creating previously a new console and reset it
+by whatever data filled in.
 
 
 # Relative coordinates
