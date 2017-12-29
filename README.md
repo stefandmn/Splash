@@ -20,11 +20,22 @@ For the syntax details of each option please see **Running** chapter.
 > **Note**: One one option could be specified for a workflow step (program execution)
 
 # Prerequisites
-In order to build `clue-splash` package from source code you have to install required packages mentioned below. **Splash** is a static-compiled application, so it is not need to install additional libraries or package to run it or to bundle it in your RamFS image.
+In order to build `clue-splash` package from source code you have to install required packages mentioned below. **Splash** is a 
+static-compiled application, so it is not need to install additional libraries or package to run it or to bundle it in your 
+RamFS image.
 
 `apt-get install -y gcc uthash-dev libjpeg62-dev libfreetype6-dev libpng12-dev`
 
 # Running
+As a general structure, each drawing command has the following componwents:
+1. initial coordinates - an (x,y) point where the object is located on the screen
+2. type of the object - describes what type of object will be drawn on the screen; the options have been mentioned above: 
+`image`, `shape` and `message`.
+3. graphical formating options - graphical properties declared through `--properties` option to define the format of the object
+that is going to be drawn or displayed
+4. display options - dedicated options  that allows you to build __an workflow__ using consecutive execution command of Splash 
+application. With this option you can memorize object to use them from one session to another without to repeat the command, to 
+overdrawn graphical objects from the previous location, etc. - all these options are explained in ___Display Options___ chapter.
 
 ## Messages
 To display **text messages** on the screen you have to prepare a command with the following options:
@@ -58,8 +69,9 @@ can refer a file name already deployed on the application resources location (`/
 file location. In case the file extension is not specified the PNG format is considered by default.
 * `rotate` - rotate specified image with 90, 180 or 270 degrees - corresponding to input values: 1, 2, 3
 * `enlarge` - displays the image to the whole area of the screen. It is a boolean value, accepts values, likes, `y`, `yes`, `true`
-* `stretch` - displays the image to the whole area of the screen by in stretching mode. It is also a boolean value, he possible value
-			are described above.
+* `stretch` - displays the image to the whole area of the screen by in stretching mode. It is also a boolean value, the possible value are described above.
+
+> **Note**: Only `bmp`, `jpg` or `png` file formats are supported!
 
 ___Examples___
 
@@ -85,12 +97,27 @@ additional options (dedicated per type of shape) for specific formatting: The fo
 * `progressbar` - draw a progress bar control as a derived shape from rectangle.
 
 All graphical formating options of `line`, `hline` and `vline` shapes are:
-* `linecolor` - 
-* `x2point` -
-* `y2point` -
+* `linecolor` - specifies the color of the line in HEX format
+* `x2point` - horizontal target coordinate
+* `y2point` - vertical target coordinate
 
+___Examples___
 
-# Relative coordinates
+`/opt/clue/bin/splash --shape=line -x100 -y100 --properies="x2point=200,y2point=200,linecolor=#00FF00"`
+
+__or__
+
+`/opt/clue/bin/splash --shape=hline -x100 -y100 --properies="x2point=200,linecolor=#00FF00"`
+
+The graphical formating options for `rectangle` shape are:
+* `linecolor` - specifies the color of the line in HEX format
+* `fillcolor`
+* `width` - horizontal target coordinate
+* `height` - vertical target coordinate
+* `linewidth`
 
 
 # Display options
+
+
+# Relative coordinates
