@@ -26,7 +26,8 @@ In order to build `clue-splash` package from source code you have to install req
 
 # Running
 
-1. To display **text messages** on the screen you have to prepare a command with the following options:
+## Messages
+To display **text messages** on the screen you have to prepare a command with the following options:
 * `fontfile` - refers a TTF file which should be the font name to display the required text message.
 				In case the font file is already deployed in `share` location of **Splash** module
 				(`/opt/clue/share/splash/fonts`) you can refer only the file name (not thw whole path).
@@ -51,7 +52,8 @@ __or__
 > **Note**: The coordinates options like `-x | --xpoint` or `-y | --ypoint` are described in ___Display Options___ chapter.
 
 
-2. To display **pictures** on the screen you have to build a command with the options described below. The `--image` switch
+## Images
+To display **images** on the screen you have to build a command with the options described below. The `--image` switch
 can refer a file name already deployed on the application resources location (`/opt/clue/share/splash/images`) or a specific
 file location. In case the file extension is not specified the PNG format is considered by default.
 * `rotate` - rotate specified image with 90, 180 or 270 degrees - corresponding to input values: 1, 2, 3
@@ -72,7 +74,8 @@ __or__
 `/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg" --xpoint=100 -ypoint= --properties="rotate=1"`
 
 
-3. To display **graphical shapes** on the screen you have to prepare a command to specify what shape is needed and
+## Shapes
+To display **graphical shapes** on the screen you have to prepare a command to specify what shape is needed and
 additional options (dedicated per type of shape) for specific formatting: The following shape types are implemented
 * `line` - draw a simple line from point (x,y) to point (x2,y2)
 * `hline` - draw a horizontal line (having the same `X` for both points - not needed to be specified for the second point)
