@@ -111,11 +111,51 @@ __or__
 
 The graphical formating options for `rectangle` shape are:
 * `linecolor` - specifies the color of the line in HEX format
-* `fillcolor`
-* `width` - horizontal target coordinate
-* `height` - vertical target coordinate
-* `linewidth`
+* `fillcolor` - specifies the color of the rectangle area in HEX format
+* `width` - describes the width of the rectangle
+* `height` - describes the height of the rectangle
+* `linewidth` - specifies the thickness of the rectangle border
 
+___Examples___
+
+`/opt/clue/bin/splash --shape=rectangle -x100 -y100 --properies="width=200,height=100,linecolor=#00FF00"`
+
+__or__
+
+`/opt/clue/bin/splash --shape=rectangle -x500 -y500 --properies="width=200,height=200,linecolor=#000FF0,linewidth=5,fillcolor=#FF0000"`
+
+The graphical formating options for `circle` shape are:
+* `linecolor` - specifies the color of the line in HEX format
+* `fillcolor` - specifies the color of the circle area in HEX format
+* `radius` - describes the radius of the circle
+* `linewidth` - specifies the thickness of the circle border
+
+___Examples___
+
+`/opt/clue/bin/splash --shape=circle -x500 -y500 --properies="radius=200,linecolor=#00FF00"`
+
+__or__
+
+`/opt/clue/bin/splash --shape=circle -x500 -y500 --properies="radius=200,linecolor=#00FF00,linewidth=5"`
+
+The graphical formating options for `progressbar` shape are:
+* `percent` - shows how much from the total area is ocupied by `barcolor` color. 
+* `linecolor` - specifies the color of the line in HEX format
+* `barcolor` - specifies the color of the rectangle area in HEX format which is already filled in, and described the `percent` 
+part of internal rectangle area described by the progressbar control. if this color is not specified than it will be considered 
+white (`#FFFFFF` color to fill it in when the `percent` value is bigger than 0)
+* `backgroundcolor` - describe the color that suppose to be in the inner part of the progressbar control when the fill in 
+percentage is 0 or less than 0 (when is less the color area is figure it out in the right side of the control). If not color 
+is specified than it will be considered by default black color (`#000000`)
+* `width` - describes the width of the progressbar control
+* `height` - describes the height of the progressbar control
+* `linewidth` - specifies the thickness of the progressbar border
+
+___Examples___
+
+`/opt/clue/bin/splash --shape=progressbar -x500 -y500 --properies="width=400,height=50,linecolor=#0000FF,linewidth=4,barcolor=#F0F0F0"`
+
+__or__
 
 # Display options
 
