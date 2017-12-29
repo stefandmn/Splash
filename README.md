@@ -216,3 +216,13 @@ by whatever data filled in.
 
 
 # Relative coordinates
+Just to have flexibility render the graphical objects (messages, shapes and images) on any graphical console (display - monitors,
+TVs, custom displays) it was implemented a mechanism to render the object using relative coordinates. The way to define such
+relative coordinates considering the total height and width of the screen; the relative coordinate is actually a fraction between
+two numbers; just to differentiate it by regular coordinates the relative coordinates have negative values.
+The fraction contains at least two digits and a value like `-12` means 1/2 from screen height or width. So mean `-12` screen center.
+A number like `-34` means 3/4 from the height or width; `-2021` means 20/21 from screen width or height, so very close to the right/down
+limit of the screen. A number like `-110` means 1/10 from the height or width of the screen, so very close to the left/top limit
+of the screen.
+The relative coordinate are applicable only to the origin coordinates options `-x` or `--xpoint`, and `-y` or `--ypoint`, and in case
+no values are are specified to these options, relative values will be considered - always referring mid of the screen (`-12`)
