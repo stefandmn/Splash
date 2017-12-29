@@ -50,15 +50,15 @@ To display **text messages** on the screen you have to prepare a command with th
 
 ___Examples___
 
-`/opt/clue/bin/splash --message="Sample message" -x100 -y200`
+`splash --message="Sample message" -x100 -y200`
 
 __or__
 
-`/opt/clue/bin/splash --message="Sample message" -x100 -y200 -properties="fontcolor=#ff0000,fontsize=30,fontfile=teletext"`
+`splash --message="Sample message" -x100 -y200 -properties="fontcolor=#ff0000,fontsize=30,fontfile=teletext"`
 
 __or__
 
-`/opt/clue/bin/splash --message="Sample message" -x100 -y200 -properties="fontcolor=ff00ff,fontfile=/root/resources/arial.ttf"`
+`splash --message="Sample message" -x100 -y200 -properties="fontcolor=ff00ff,fontfile=/root/resources/arial.ttf"`
 
 > **Note**: The coordinates options like `-x | --xpoint` or `-y | --ypoint` are described in ___Display Options___ chapter.
 
@@ -75,15 +75,15 @@ file location. In case the file extension is not specified the PNG format is con
 
 ___Examples___
 
-`/opt/clue/bin/splash --image=splash`
+`splash --image=splash`
 
 __or__
 
-`/opt/clue/bin/splash --image=/opt/clue/share/splash/images/splash.jpg" -x100 -y100`
+`splash --image=/opt/clue/share/splash/images/splash.jpg" -x100 -y100`
 
 __or__
 
-`/opt/clue/bin/splash -i /opt/clue/share/splash/images/splash.jpg" --xpoint=100 -ypoint= --properties="rotate=1"`
+`splash -i /opt/clue/share/splash/images/splash.jpg" --xpoint=100 -ypoint= --properties="rotate=1"`
 
 
 ## Shapes
@@ -103,11 +103,11 @@ All graphical formating options of `line`, `hline` and `vline` shapes are:
 
 ___Examples___
 
-`/opt/clue/bin/splash --shape=line -x100 -y100 --properies="x2point=200,y2point=200,linecolor=#00FF00"`
+`splash --shape=line -x100 -y100 --properies="x2point=200,y2point=200,linecolor=#00FF00"`
 
 __or__
 
-`/opt/clue/bin/splash --shape=hline -x100 -y100 --properies="x2point=200,linecolor=#00FF00"`
+`splash --shape=hline -x100 -y100 --properies="x2point=200,linecolor=#00FF00"`
 
 The graphical formating options for `rectangle` shape are:
 * `linecolor` - specifies the color of the line in HEX format
@@ -118,11 +118,11 @@ The graphical formating options for `rectangle` shape are:
 
 ___Examples___
 
-`/opt/clue/bin/splash --shape=rectangle -x100 -y100 --properies="width=200,height=100,linecolor=#00FF00"`
+`splash --shape=rectangle -x100 -y100 --properies="width=200,height=100,linecolor=#00FF00"`
 
 __or__
 
-`/opt/clue/bin/splash --shape=rectangle -x500 -y500 --properies="width=200,height=200,linecolor=#000FF0,linewidth=5,fillcolor=#FF0000"`
+`splash --shape=rectangle -x500 -y500 --properies="width=200,height=200,linecolor=#000FF0,linewidth=5,fillcolor=#FF0000"`
 
 The graphical formating options for `circle` shape are:
 * `linecolor` - specifies the color of the line in HEX format
@@ -132,11 +132,11 @@ The graphical formating options for `circle` shape are:
 
 ___Examples___
 
-`/opt/clue/bin/splash --shape=circle -x500 -y500 --properies="radius=200,linecolor=#00FF00"`
+`splash --shape=circle -x500 -y500 --properies="radius=200,linecolor=#00FF00"`
 
 __or__
 
-`/opt/clue/bin/splash --shape=circle -x500 -y500 --properies="radius=200,linecolor=#00FF00,linewidth=5"`
+`splash --shape=circle -x500 -y500 --properies="radius=200,linecolor=#00FF00,linewidth=5"`
 
 The graphical formating options for `progressbar` shape are:
 * `percent` - shows how much from the total area is ocupied by `barcolor` color. 
@@ -153,9 +153,13 @@ is specified than it will be considered by default black color (`#000000`)
 
 ___Examples___
 
-`/opt/clue/bin/splash --shape=progressbar -x500 -y500 --properies="width=400,height=50,linecolor=#0000FF,linewidth=4,barcolor=#F0F0F0"`
+`splash --shape=progressbar -x500 -y500 --properies="width=400,height=50,linecolor=#0000FF,linewidth=4,barcolor=#F0F0F0"`
 
 __or__
+
+`splash --shape=progressbar --ypoint=-34 --properties="width=500,height=50,linewidth=4,percent=-30"`
+
+> **Note**: Negative value of `percept` option indicate that the progressbar control will not be redrawn, only `barcolor` area will be adjusted according to the absolute value of the `percent` option. The negative value of `xpoint` option is fully described in ___Relative coordinates___ chapter.
 
 # Display options
 
