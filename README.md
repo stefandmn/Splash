@@ -1,12 +1,17 @@
 # Clue Splash
 
-**Splash** is a graphical term for representation of boot process, developed especially for Clue OS but
-might be applicable to any Linux system. Splash can display graphics (JPG image format) or some
-combinations of graphics with text messages (in graphical format). Splash program uses a stateful
-memory buffer and is able to initiate and maintain the workflow even is the process is not running
-in loop. The workflow is initiated in InitRAM area, creating a dedicated graphical console and then,
-other workflow steps could be launched (by individual process execution) that will use existing
-graphical console and updates display content: display new splashes or text messages.
+**Splash** is a graphical term for representation of boot process, developed especially for **Clue OS**
+('the father' of this project) but might be applicable to any Linux system. **Splash** application is
+currently use to control the boot process of the **Clue OS** (_Debian Jessie_ fork) and to implement
+a graphical view of different utilities from **Setup** project (part of **Clue** main project as main
+utility for system configuration).
+**Splash** can display graphics (JPG image format and others) or some combinations of graphics with
+text messages (in graphical format). Splash program uses a stateful memory buffer and is able to
+initiate and maintain the workflow even is the process is not running in loop.
+Typically, the workflow for boot or other management screens is initiated in InitRAM area, creating
+a dedicated graphical console and then, other workflow steps could be launched (by individual process
+execution) that will use existing graphical console and updates display content: display new splashes
+or text messages.
 
 Splash program is designed to support the following feature:
 
@@ -20,22 +25,24 @@ For the syntax details of each option please see **Running** chapter.
 > **Note**: One one option could be specified for a workflow step (program execution)
 
 # Prerequisites
-In order to build `clue-splash` package from source code you have to install required packages mentioned below. **Splash** is a 
-static-compiled application, so it is not need to install additional libraries or package to run it or to bundle it in your 
-RamFS image.
+In order to build `clue-splash` package from source code you have to install required packages mentioned
+below. **Splash** is a static-compiled application, so it is not need to install additional libraries or
+package to run it or to bundle it in your ___RamFS___ image.
 
 `apt-get install -y gcc uthash-dev libjpeg62-dev libfreetype6-dev libpng12-dev`
 
 # Running
 As a general structure, each drawing command has the following componwents:
 1. initial coordinates - an (x,y) point where the object is located on the screen
-2. type of the object - describes what type of object will be drawn on the screen; the options have been mentioned above: 
+2. type of the object - describes what type of object will be drawn on the screen; the options have been
+mentioned above:
 `image`, `shape` and `message`.
-3. graphical formating options - graphical properties declared through `--properties` option to define the format of the object
-that is going to be drawn or displayed
-4. display options - dedicated options  that allows you to build __an workflow__ using consecutive execution command of Splash 
-application. With this option you can memorize object to use them from one session to another without to repeat the command, to 
-overdrawn graphical objects from the previous location, etc. - all these options are explained in ___Display Options___ chapter.
+3. graphical formating options - graphical properties declared through `--properties` option to define the
+format of the object that is going to be drawn or displayed
+4. display options - dedicated options  that allows you to build __an workflow__ using consecutive execution
+command of Splash application. With this option you can memorize object to use them from one session to another
+without to repeat the command, to overdrawn graphical objects from the previous location, etc. - all these
+options are explained in ___Display Options___ chapter.
 
 ## Messages
 To display **text messages** on the screen you have to prepare a command with the following options:
@@ -64,12 +71,14 @@ __or__
 
 
 ## Images
-To display **images** on the screen you have to build a command with the options described below. The `--image` switch
-can refer a file name already deployed on the application resources location (`/opt/clue/share/splash/images`) or a specific
-file location. In case the file extension is not specified the PNG format is considered by default.
+To display **images** on the screen you have to build a command with the options described below. The `--image`
+switch can refer a file name already deployed on the application resources location (`/opt/clue/share/splash/images`)
+or a specific file location. In case the file extension is not specified the PNG format is considered by default.
 * `rotate` - rotate specified image with 90, 180 or 270 degrees - corresponding to input values: 1, 2, 3
-* `enlarge` - displays the image to the whole area of the screen. It is a boolean value, accepts values, likes, `y`, `yes`, `true`
-* `stretch` - displays the image to the whole area of the screen by in stretching mode. It is also a boolean value, the possible value are described above.
+* `enlarge` - displays the image to the whole area of the screen. It is a boolean value, accepts values, likes,
+`y`, `yes`, `true`
+* `stretch` - displays the image to the whole area of the screen by in stretching mode. It is also a boolean value,
+the possible value are described above.
 
 > **Note**: Only `bmp`, `jpg` or `png` file formats are supported!
 
@@ -159,11 +168,25 @@ __or__
 
 `splash --shape=progressbar --ypoint=-34 --properties="width=500,height=50,linewidth=4,percent=-30"`
 
-> **Note**: Negative value of `percept` option indicate that the progressbar control will not be redrawn, only `barcolor` area will be
-adjusted according to the absolute value of the `percent` option. The negative value of `xpoint` option is fully described in
- ___Relative coordinates___ chapter.
+> **Note**: Negative value of `percept` option indicate that the progressbar control will not be redrawn, only `barcolor`
+area will be adjusted according to the absolute value of the `percent` option. The negative value of `xpoint` option is
+fully described in ___Relative coordinates___ chapter.
+
 
 # Display options
+Display options make the application 'to appear' dynamic and to build simple execution workflows to create graphical screens
+from shell commands. Below are described the execution options that, together with specific object options make the execution
+process flowless. In addition, the application is designed to keep in memory each executed command and if two consecutive
+commands are executed specifying the same object type the previous one will be wiped from the screen (it is considered that
+the position and the graphical format properties have been changed and the object will be moved or overdrawn with other
+coordinates). To prevent such behaviour various display options from the list below might be combined to obtain a different
+experience.
+
+* `reset` - reset the entire screen area (delete all drawn objects) and make the screen black.
+* `console` -
+* `keep` -
+* `wipe` -
+* `head` -
 
 
 # Relative coordinates
