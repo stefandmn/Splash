@@ -1,8 +1,8 @@
 # Clue Splash
 
-**Splash** is a graphical term for representation of boot process, developed especially for **Clue OS**
+**Splash** is a graphical term for representation of boot process, developed especially for _Clue OS_
 ('the father' of this project) but might be applicable to any Linux system. **Splash** application is
-currently use to control the boot process of the **Clue OS** (_Debian Jessie_ fork) and to implement
+currently use to control the boot process of the _Clue OS_ (_Debian Jessie_ fork) and to implement
 a graphical view of different utilities from **Setup** project (part of **Clue** main project as main
 utility for system configuration).
 **Splash** can display graphics (JPG image format and others) or some combinations of graphics with
@@ -182,11 +182,30 @@ the position and the graphical format properties have been changed and the objec
 coordinates). To prevent such behaviour various display options from the list below might be combined to obtain a different
 experience.
 
-* `reset` - reset the entire screen area (delete all drawn objects) and make the screen black.
-* `console` -
-* `keep` -
-* `wipe` -
-* `head` -
+* `reset` - resets the entire screen area (delete all drawn objects) and make the screen black.
+* `console` - creates a graphical terminal over frame buffer (a canvas area able to render graphical objects). In case this
+option is not specified the command will use the existent graphical console.
+* `keep` - use this option to keep the object on the screen even if the command is repeated for the same object type with or
+without the same graphical coordinates and properties. This options allow the internal workflow to be execute but will avoid
+wiping of previous object type. The command will still go in memory to know previous execution step but will not be used for
+wiping.
+* `wipe` - wipes whatever object type was drawn before (not necessary to be drawn previously). The color properties are not
+important for this type of command but it is really important to specify the same content (message text or image or shape type)
+* `head` - it has the same behaviour like `--keep`, the difference is that the command keeps the object on the screen but is
+not asking the workflow because is skip it. So, when you are using this option the command will not go in memory, will just
+simple display the object on the screen.
+
+___Examples___
+The commands below are use-cases from **Setup** utility.
+
+`/splash --message="Clue OS" --xpoint=-2021 -y5 --head` - displays "Clue OS" text message on the top-right corner of the
+screen (relative coordinates). This message will not be removed by the next command and will not be stored in memory.
+
+`splash --message="System Setup" -x5 -y5 --keep` - displays "System Setup" message in the top-left corner of the screen and
+keeps it on the screen and in the system memory even if the next command is for the text message display.
+
+`splash --message="System Setup" -x5 -y5 --wipe` - deletes "System Setup" text message located at point (5,5) - if it was
+written there before using or not using display options (meaning using `--head` or `--keep` options).
 
 
 # Relative coordinates
