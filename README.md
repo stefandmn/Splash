@@ -1,6 +1,6 @@
 # Clue Splash
 
-Splash is a graphical term for representation of boot process, developed especially for Clue OS but
+**Splash** is a graphical term for representation of boot process, developed especially for Clue OS but
 might be applicable to any Linux system. Splash can display graphics (JPG image format) or some
 combinations of graphics with text messages (in graphical format). Splash program uses a stateful
 memory buffer and is able to initiate and maintain the workflow even is the process is not running
@@ -20,7 +20,7 @@ For the syntax details of each option please see **Running** chapter.
 > **Note**: One one option could be specified for a workflow step (program execution)
 
 # Prerequisites
-In order to build `clue-splash` package you have to install required packages:
+In order to build `clue-splash` package from source code you have to install required packages mentioned below. **Splash** is a static-compiled application, so it is not need to install additional libraries or package to run it or to bundle it in your RamFS image.
 
 `apt-get install -y gcc uthash-dev libjpeg62-dev libfreetype6-dev libpng12-dev`
 
@@ -42,13 +42,13 @@ ___Examples___
 
 __or__
 
-`/opt/clue/bin/splash --message="Sample message" -x100 -y200` -properties="fontcolor=#ff0000,fontsize=30,fontfile=teletext"`
+`/opt/clue/bin/splash --message="Sample message" -x100 -y200 -properties="fontcolor=#ff0000,fontsize=30,fontfile=teletext"`
 
 __or__
 
-`/opt/clue/bin/splash --message="Sample message" -x100 -y200` -properties="fontcolor=ff00ff,fontfile=/root/resources/arial.ttf"`
+`/opt/clue/bin/splash --message="Sample message" -x100 -y200 -properties="fontcolor=ff00ff,fontfile=/root/resources/arial.ttf"`
 
-> **Note**: The coordinates options like `-x | --xpoint` or `-y | --ypoint` are described in chapter __Display options___
+> **Note**: The coordinates options like `-x | --xpoint` or `-y | --ypoint` are described in ___Display Options___ chapter.
 
 
 2. To display **pictures** on the screen you have to build a command with the options described below. The `--image` switch
@@ -81,11 +81,13 @@ additional options (dedicated per type of shape) for specific formatting: The fo
 * `rectangle` - draw a rectangle providing a initial position and `width` and `height` dimensions.
 * `progressbar` - draw a progress bar control as a derived shape from rectangle.
 
-* `linecolor` -
+All graphical formating options of `line`, `hline` and `vline` shapes are:
+* `linecolor` - 
 * `x2point` -
 * `y2point` -
-* `linecolor` -
+
 
 # Relative coordinates
+
 
 # Display options
