@@ -227,7 +227,7 @@ limit of the screen. A number like `-110` means 1/10 from the height or width of
 of the screen.
 
 The relative coordinate are applicable only to the origin coordinates options `-x` or `--xpoint`, and `-y` or `--ypoint`, and in case
-no values are are specified to these options, relative values will be considered - always referring mid of the screen (`-12`)
+no values are are specified to these options, relative values will be considered - always referring mid of the screen.
 
 ___Examples___
 
@@ -235,4 +235,4 @@ ___Examples___
 > Displays splash.png image in the middle of the screen.
 
 `/splash --message="Clue" --xpoint=-12 -y5 --`
-> Displays "Clue" text message to the point `(width/2, 5)`
+> Displays "Clue" text message to the point (width/2, 5)
