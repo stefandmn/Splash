@@ -232,7 +232,7 @@ doInfo()
 	fi
 
 	local idx=0
-	local sno=0
+	local sno=1
 	local msg=""
 	local img="on"
 	for svc in ${services} ; do
