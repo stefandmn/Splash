@@ -5,7 +5,7 @@
 #
 # Custom build workflow to compile annd build binaries for Splash module
 #
-# @version $Id: buildremote.sh 1817 2018-01-16 10:27:17Z stefan $
+# @version $Id: buildremote.sh 1970 2018-03-31 16:30:28Z stefan $
 ##########################################################################
 # Set global variables and execute initialization operation
 
@@ -128,7 +128,7 @@ function runDownload()
 
 function runClean()
 {
-	if [[ "$1" = -*c* ]] || [ "$1" = "" ] ; then
+	if [[ "$1" = -*c* ]] ; then
 		banner "Cleaning environment.."
 		clean
 	fi
@@ -241,7 +241,7 @@ function run()
 
 function prerequisites()
 {
-	apt-get install -y libpng12-dev libjpeg-dev libfreetype6-dev uthash-dev
+	apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev uthash-dev
 
 	## Stop service and make it to not run automatically
 	/opt/clue/bin/setup -s service -m "clue-splash"

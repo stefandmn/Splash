@@ -40,7 +40,7 @@ done
 
 ttl()
 {
-	local version=$($SETUP -g filecfg VERSION_ID /etc/os-release)
+	local version=$($SETUP -g propcfg VERSION_ID /etc/os-release)
 	version=$(echo "${version}" | sed -r 's/[" ]//g')
 
 	if [ $# -eq 2 ]; then
@@ -189,10 +189,16 @@ doSetup()
 
 doInfo()
 {
-	local ipaddr=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
-	ipaddr=$(echo "$ipaddr" | tr "\n" " ")
+	local ipaddr="N/A"
+	if [ $(/sbin/ifconfig | /bin/grep -c "Bcast") -ne 0 ]; then
+		ipaddr=`/sbin/ifconfig | /bin/grep "Bcast" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`
+		ipaddr=$(echo "$ipaddr" | tr "\n" " ")
+	elif [ $(/sbin/ifconfig | /bin/grep -c "broadcast") -ne 0 ]; then
+		ipaddr=`/sbin/ifconfig | /bin/grep "broadcast" | sed -e 's/^[ \t]*//' | /usr/bin/cut -d " " -f 2`
+		ipaddr=$(echo "$ipaddr" | tr "\n" " ")
+	fi
 
-	local sysver=$($SETUP -g filecfg VERSION_ID /etc/os-release)
+	local sysver=$($SETUP -g propcfg VERSION_ID /etc/os-release)
 	sysver=$(echo "${sysver}" | sed -r 's/[" ]//g')
 
 	local services=""
