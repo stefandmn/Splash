@@ -5,7 +5,7 @@
 #
 # Custom build workflow to compile annd build binaries for Splash module
 #
-# @version $Id: buildremote.sh 1970 2018-03-31 16:30:28Z stefan $
+# @version $Id: buildremote.sh 1973 2018-03-31 20:17:44Z stefan $
 ##########################################################################
 # Set global variables and execute initialization operation
 
@@ -95,7 +95,7 @@ function runPrerequisites()
 {
 	if [[ "$1" = -*p* ]] || [ "$1" = "" ] ; then
 		banner "Installing prerequisites.."
-		/opt/clue/bin/setup -s repos -e
+		/opt/clue/bin/setup -s update -r expand
 		check
 
 		apt-get install -y build-essential autoconf autopoint libtool pkg-config cmake gcc g++ gcc-4.9 g++-4.9
@@ -103,7 +103,7 @@ function runPrerequisites()
 		apt-get install -y git subversion wget curl tar zip unzip
 
 		prerequisites
-		/opt/clue/bin/setup -s repos -c
+		/opt/clue/bin/setup -s update -r compact
 	fi
 }
 
