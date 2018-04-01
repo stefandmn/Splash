@@ -1,10 +1,10 @@
 Origin: AMSD
 Package: clue-splash
-Version: 1.3.29
+Version: 1.3.32
 Priority: required
 Section: main
 Installed-Size: 0000
 Architecture: armhf
-Depends: libpng16-16 (>=1.6), libjpeg62-turbo (>=1:1.3.1), libfreetype6 (>=2.6), uthash-dev (>=1.9.7)
+Depends: libpng16-16(>=1.6), libjpeg62-turbo(>=1:1.3.1), libfreetype6(>=2.6), uthash-dev(>=1.9.7)
 Maintainer: damian.stefan@gmail.com
 Description: Splash application for Clue OS to display boot screen and sequences for OS installer and main screens
