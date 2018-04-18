@@ -32,12 +32,12 @@ package to run it or to bundle it in your ___RamFS___ image.
 `apt-get install -y gcc uthash-dev libjpeg62-dev libfreetype6-dev libpng12-dev`
 
 # Running
-As a general structure, each drawing command has the following componwents:
+As a general structure, each drawing command has the following components:
 1. initial coordinates - an (x,y) point where the object is located on the screen
 2. type of the object - describes what type of object will be drawn on the screen; the options have been
 mentioned above:
 `image`, `shape` and `message`.
-3. graphical formating options - graphical properties declared through `--properties` option to define the
+3. graphical formatting options - graphical properties declared through `--properties` option to define the
 format of the object that is going to be drawn or displayed
 4. display options - dedicated options  that allows you to build __an workflow__ using consecutive execution
 command of Splash application. With this option you can memorize object to use them from one session to another
