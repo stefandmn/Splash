@@ -1,0 +1,19 @@
+[Unit]
+SourcePath=/etc/init.d/clue-splash
+Description=Clue Splash
+Before=multi-user.target
+Before=graphical.target
+After=network.target local-fs.target remote-fs.target
+
+[Service]
+Type=forking
+Restart=no
+KillMode=process
+RemainAfterExit=yes
+SuccessExitStatus=5 6
+ExecStart=/etc/init.d/clue-splash start
+ExecStop=/etc/init.d/clue-splash stop
+
+[Install]
+WantedBy=multi-user.target
+Alias=clue-splash.service
