@@ -5,7 +5,7 @@
 #
 # Custom build workflow to compile annd build binaries for Splash module
 #
-# @version $Id: buildremote.sh 2006 2018-04-18 18:53:31Z stefan $
+# @version $Id: buildremote.sh 2029 2018-04-22 08:35:40Z stefan $
 ##########################################################################
 # Set global variables and execute initialization operation
 
@@ -98,8 +98,9 @@ function runPrerequisites()
 		/opt/clue/bin/setup -s update -r expand
 		check
 
-		apt-get install -y build-essential autoconf autopoint libtool pkg-config cmake gcc g++ gcc-4.9 g++-4.9
-		apt-get install -y libraspberrypi-dev linux-headers-$(uname -r)
+		local kv=$(/usr/bin/dpkg -l | grep linux-image | sed -e 's/\s\+/ /g' | cut -f2 -d' ' | sed -e 's/linux-image//g')
+		apt-get install -y build-essential autoconf autopoint libtool pkg-config cmake gcc g++
+		apt-get install -y libraspberrypi-dev linux-headers${kv}
 		apt-get install -y git subversion wget curl tar zip unzip
 
 		prerequisites

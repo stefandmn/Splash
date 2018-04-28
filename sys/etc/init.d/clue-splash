@@ -125,7 +125,7 @@ doSetup()
 		$SETUP -s filesys -es || err
 
 		rm -rf /var/.expandfs
-		end "Resizing prerequisites complete!"
+		end "File system resizing is complete!"
 	else
 		ttl 0 "System Setup"
 		local IC=$($SETUP -g network -ic)
@@ -155,7 +155,7 @@ doSetup()
 			$SETUP -s update -ru || err
 			bar 40
 		else
-			msg "No Internet access, system upgrade procedure is skipped.."
+			msg "No Internet access, system upgrade procedure is skipped.." && sleep 2
 			bar 40
 		fi
 

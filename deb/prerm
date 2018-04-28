@@ -7,4 +7,5 @@ if [ "$1" == "remove" ]; then
 	fi
 	/bin/systemctl disable clue-splash >/dev/null 2>&1
 	/bin/systemctl daemon-reload >/dev/null 2>&1
+	/opt/clue/bin/splash --exit
 fi
