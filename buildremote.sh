@@ -5,7 +5,7 @@
 #
 # Custom build workflow to compile annd build binaries for Splash module
 #
-# @version $Id: buildremote.sh 2029 2018-04-22 08:35:40Z stefan $
+# @version $Id: buildremote.sh 2087 2018-05-13 15:18:08Z stefan $
 ##########################################################################
 # Set global variables and execute initialization operation
 
@@ -120,7 +120,7 @@ function runDownload()
 			svn update
 		else
 			cd ${SRCDIR}
-			svn checkout svn://amsd.go.ro/rootsvn/Clue/clue-1/modules/${MODULE}/src ${MODULE}
+			svn checkout svn://amsd.go.ro/rootsvn/Clue/clue-1/${MODULE}/src ${MODULE}
 			/usr/bin/find ${SRCDIR}/${MODULE} -type f -exec chmod +x {} \;
 		fi
 	fi
