@@ -6,7 +6,8 @@ After=network.target local-fs.target remote-fs.target
 Wants=clue-picam.service clue-bridge.service clue-mcpi.service
 
 [Service]
-Type=forking
+Type=oneshot
+RemainAfterExit=yes
 ExecStart=/etc/init.d/clue-splash start
 ExecStop=/etc/init.d/clue-splash stop
 
