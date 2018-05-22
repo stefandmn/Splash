@@ -1,5 +1,4 @@
 [Unit]
-SourcePath=/etc/init.d/clue-splash
 Description=Clue Splash
 Before=multi-user.target
 After=network.target local-fs.target remote-fs.target
@@ -8,8 +7,8 @@ Wants=clue-picam.service clue-bridge.service clue-mcpi.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/etc/init.d/clue-splash start
-ExecStop=/etc/init.d/clue-splash stop
+ExecStart=/opt/clue/share/splash/service.sh start
+ExecStop=/opt/clue/share/splash/service.sh stop
 
 [Install]
 WantedBy=multi-user.target

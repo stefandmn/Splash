@@ -7,7 +7,7 @@ if [ "$1" == "configure" ]; then
 	update-initramfs -u >/dev/null 2>&1
 
 	# Register service
-	chmod +x /etc/init.d/clue-splash
+	chmod +x /opt/clue/share/splash/service.sh
 	/bin/systemctl enable clue-splash >/dev/null 2>&1
 	/bin/systemctl daemon-reload >/dev/null 2>&1
 fi

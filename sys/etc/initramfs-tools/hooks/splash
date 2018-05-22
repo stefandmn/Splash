@@ -17,10 +17,10 @@ esac
 
 . /usr/share/initramfs-tools/hook-functions
 
-mkdir -p $DESTDIR/opt/clue/bin
-mkdir -p $DESTDIR/opt/clue/share/splash
-cp -rf /opt/clue/bin/splash $DESTDIR/opt/clue/bin/splash
-cp -rf /opt/clue/share/splash/* $DESTDIR/opt/clue/share/splash/
+mkdir -p ${DESTDIR}/opt/clue/bin
+mkdir -p ${DESTDIR}/opt/clue/share/splash
+cp -rf /opt/clue/bin/splash ${DESTDIR}/opt/clue/bin/splash
+cp -rf /opt/clue/share/splash/* ${DESTDIR}/opt/clue/share/splash/
 
 copy_exec /opt/clue/bin/splash
 
