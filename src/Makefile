@@ -7,7 +7,7 @@ BINDIR=${PREFIX}/bin
 SHRDIR=${PREFIX}/share/splash
 
 # These variables are for Linux compiler
-LIBS=-lfreetype -ljpeg -lpng16 -lm -lz
+LIBS=-lfreetype -ljpeg -lpng12 -lm -lz
 INCL=-I/usr/include/freetype2 -I/usr/include/freetype2/freetype
 ARCH=linux
 
